@@ -1,0 +1,13 @@
+@host = localhost:8080
+
+// Get User
+GET http://{{host}}/api/v1/user/ HTTP/1.1
+content-type: application/json
+authorization: token
+
+{
+    "email": "test1@gmail.com",
+    "password": "123456"
+}
+
+### 
