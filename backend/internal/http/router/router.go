@@ -14,7 +14,6 @@ func StartRouter() {
 	api := router.Group("/api")
 	{
 		api.GET("login/", rateLimiter, controllers.GenerateToken)
-		api.GET("/metrics", rateLimiter, middlewares.PrometheusHandler())
 		api.POST("users/", rateLimiter, controllers.CreateUser)
 		authorized := api.Group("/v1/").Use(middlewares.Auth())
 		{

@@ -1,32 +1,71 @@
 package repository
 
 import (
+	"context"
 	"fmt"
-
+	"os"
 	"sync"
+	"time"
 
-	database "github.com/Julia-Marcal/reusable-api/internal/user"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/Julia-Marcal/reusable-api/config/env"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	once = sync.Once{}
-	db   *gorm.DB
+	once   sync.Once
+	client *mongo.Client
+	db     *mongo.Database
 )
 
-func NewPostgres() *gorm.DB {
+// NewMongoDB initializes and returns the MongoDB database instance.
+func NewMongoDB() *mongo.Database {
 	once.Do(func() {
-		connectionStr := "user=postgres password=password dbname=api_db host=postgres port=5432 sslmode=disable"
-		fmt.Println("about to connect to database")
-		db, err := gorm.Open(postgres.Open(connectionStr), &gorm.Config{
-			SkipDefaultTransaction: true,
-			//disable operations inside transaction to ensure data consistency
-		})
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		connectionStr := env.GetMongoConnectionString()
+		fmt.Println("Connecting to MongoDB with connection string:", connectionStr)
+
+		clientOptions := options.Client().ApplyURI(connectionStr)
+		var err error
+		client, err = mongo.Connect(ctx, clientOptions)
 		if err != nil {
-			panic("failed to connect to database")
+			panic(fmt.Sprintf("Failed to connect to MongoDB: %v", err))
 		}
-		db.AutoMigrate(&database.User{})
+
+		err = client.Ping(ctx, nil)
+		if err != nil {
+			panic(fmt.Sprintf("Failed to ping MongoDB: %v", err))
+		}
+
+		databaseName := os.Getenv("MONGO_DATABASE")
+		db = client.Database(databaseName)
+		fmt.Println("Successfully connected to MongoDB:", databaseName)
+
+		initializeCollections(db)
 	})
+
 	return db
+}
+
+func initializeCollections(db *mongo.Database) {
+	usersCollection := db.Collection("users")
+
+	indexModel := mongo.IndexModel{
+		Keys: map[string]interface{}{
+			"email": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := usersCollection.Indexes().CreateOne(ctx, indexModel)
+	if err != nil {
+		fmt.Printf("Failed to create index for users collection: %v\n", err)
+	} else {
+		fmt.Println("Successfully created index for users collection")
+	}
 }

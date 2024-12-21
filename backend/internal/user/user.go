@@ -3,39 +3,38 @@ package database
 import (
 	"time"
 
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-
 	env "github.com/Julia-Marcal/reusable-api/config/env"
 	security "github.com/Julia-Marcal/reusable-api/helpers/security"
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// User represents a user document in MongoDB.
 type User struct {
-	Id        string     `gorm:"primaryKey"`
-	Name      string     `gorm:"not null;size:50" sql:"index"`
-	LastName  string     `gorm:"not null;size:50"`
-	Age       int32      `gorm:"not null"`
-	Email     string     `gorm:"uniqueIndex"`
-	Password  string     `gorm:"not null"`
-	CreatedAt *time.Time `gorm:"default:current_timestamp"`
-	UpdatedAt *time.Time `gorm:"default:current_timestamp"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	UUID      string             `bson:"uuid"`
+	Name      string             `bson:"name"`
+	LastName  string             `bson:"last_name"`
+	Age       int32              `bson:"age"`
+	Email     string             `bson:"email"`
+	Password  string             `bson:"password"`
+	CreatedAt time.Time          `bson:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at"`
 }
 
-func (User) TableName() string {
-	return "users"
-}
-
-func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
-	user.Id = uuid.NewString()
+func (user *User) BeforeInsert() error {
+	user.UUID = uuid.NewString()
 
 	salt := env.SetSalt()
-
-	_, password, err := security.DeriveKey(user.Password, salt)
+	_, hashedPassword, err := security.DeriveKey(user.Password, salt)
 	if err != nil {
 		return err
 	}
 
-	password_str := string(password)
-	user.Password = password_str
+	user.Password = string(hashedPassword)
+
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
 	return nil
 }
