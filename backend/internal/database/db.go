@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"fmt"
-	"os"
+	"log"
 	"sync"
 	"time"
 
 	"github.com/Julia-Marcal/reusable-api/config/env"
+	database "github.com/Julia-Marcal/reusable-api/internal/user"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,57 +16,39 @@ import (
 var (
 	once   sync.Once
 	client *mongo.Client
-	db     *mongo.Database
 )
 
-// NewMongoDB initializes and returns the MongoDB database instance.
-func NewMongoDB() *mongo.Database {
+type Collections struct {
+	Users *mongo.Collection
+}
+
+func NewMongoDB() *mongo.Client {
 	once.Do(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
 		connectionStr := env.GetMongoConnectionString()
-		fmt.Println("Connecting to MongoDB with connection string:", connectionStr)
-
-		clientOptions := options.Client().ApplyURI(connectionStr)
-		var err error
-		client, err = mongo.Connect(ctx, clientOptions)
+		client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 		if err != nil {
-			panic(fmt.Sprintf("Failed to connect to MongoDB: %v", err))
+			panic(err)
+		}
+
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		err = client.Connect(ctx)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		err = client.Ping(ctx, nil)
 		if err != nil {
-			panic(fmt.Sprintf("Failed to ping MongoDB: %v", err))
+			log.Fatal(err)
 		}
 
-		databaseName := os.Getenv("MONGO_DATABASE")
-		db = client.Database(databaseName)
-		fmt.Println("Successfully connected to MongoDB:", databaseName)
-
-		initializeCollections(db)
+		fmt.Println("Successfully connected to MongoDB")
 	})
 
-	return db
+	return client
 }
 
-func initializeCollections(db *mongo.Database) {
-	usersCollection := db.Collection("users")
-
-	indexModel := mongo.IndexModel{
-		Keys: map[string]interface{}{
-			"email": 1,
-		},
-		Options: options.Index().SetUnique(true),
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	_, err := usersCollection.Indexes().CreateOne(ctx, indexModel)
-	if err != nil {
-		fmt.Printf("Failed to create index for users collection: %v\n", err)
-	} else {
-		fmt.Println("Successfully created index for users collection")
+func GetCollections(client *mongo.Client) *Collections {
+	return &Collections{
+		Users: database.CreateUsersCollection(client),
 	}
 }
