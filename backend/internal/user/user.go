@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	env "github.com/Julia-Marcal/reusable-api/config/env"
-	security "github.com/Julia-Marcal/reusable-api/helpers/security"
+	"github.com/Julia-Marcal/reusable-api/config/env"
+	"github.com/Julia-Marcal/reusable-api/helpers/security"
 	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +26,9 @@ type User struct {
 	UpdatedAt time.Time          `bson:"updated_at"`
 }
 
-func CreateUsersCollection(client *mongo.Client) *mongo.Collection {
-	db := client.Database(env.GetDatabase())
-	usersCollection := db.Collection("Users")
+func CreateUsersCollection(db *mongo.Database) *mongo.Collection {
+	collectionName := "Users"
+	collection := db.Collection("Users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -41,11 +40,11 @@ func CreateUsersCollection(client *mongo.Client) *mongo.Collection {
 		Options: options.Index().SetUnique(true),
 	}
 
-	_, err := usersCollection.Indexes().CreateOne(ctx, indexModel)
+	_, err := collection.Indexes().CreateOne(ctx, indexModel)
 	if err != nil {
-		fmt.Printf("Failed to create index for users collection: %v\n", err)
+		fmt.Printf("Failed to create index for %s collection: %v\n", collectionName, err)
 	} else {
-		fmt.Println("Successfully created index for users collection")
+		fmt.Printf("Successfully created index for %s collection\n", collectionName)
 	}
 
 	validationSchema := bson.M{
@@ -55,7 +54,7 @@ func CreateUsersCollection(client *mongo.Client) *mongo.Collection {
 			"uuid":       bson.M{"bsonType": "string"},
 			"name":       bson.M{"bsonType": "string"},
 			"last_name":  bson.M{"bsonType": "string"},
-			"age":        bson.M{"bsonType": "int"},
+			"age":        bson.M{"bsonType": "int32"},
 			"email":      bson.M{"bsonType": "string"},
 			"password":   bson.M{"bsonType": "string"},
 			"created_at": bson.M{"bsonType": "date"},
@@ -63,21 +62,19 @@ func CreateUsersCollection(client *mongo.Client) *mongo.Collection {
 		},
 	}
 
-	validator := bson.M{"$jsonSchema": validationSchema}
-	opts := options.CreateCollection().SetValidator(validator)
+	if collectionName == "Users" {
+		validator := bson.M{"$jsonSchema": validationSchema}
+		opts := options.CreateCollection().SetValidator(validator)
 
-	err = db.CreateCollection(ctx, "Users", opts)
-	if err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			fmt.Println("Users collection already exists, skipping creation.")
+		err := db.CreateCollection(ctx, collectionName, opts)
+		if err != nil {
+			fmt.Printf("Failed to create %s collection: %v\n", collectionName, err)
 		} else {
-			fmt.Printf("Failed to create users collection: %v\n", err)
+			fmt.Printf("Successfully created %s collection with validation rules\n", collectionName)
 		}
-	} else {
-		fmt.Println("Successfully created users collection with validation rules")
 	}
 
-	return usersCollection
+	return collection
 }
 
 func (user *User) BeforeInsert() error {

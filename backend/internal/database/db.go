@@ -25,7 +25,9 @@ type Collections struct {
 func NewMongoDB() *mongo.Client {
 	once.Do(func() {
 		connectionStr := env.GetMongoConnectionString()
-		client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
+
+		var err error
+		client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr))
 		if err != nil {
 			panic(err)
 		}
@@ -48,7 +50,9 @@ func NewMongoDB() *mongo.Client {
 }
 
 func GetCollections(client *mongo.Client) *Collections {
+	db := client.Database(env.GetDatabase())
+
 	return &Collections{
-		Users: database.CreateUsersCollection(client),
+		Users: database.CreateUsersCollection(db),
 	}
 }
