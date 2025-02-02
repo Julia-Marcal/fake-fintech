@@ -1,58 +1,38 @@
 package repository
 
 import (
-	"context"
 	"fmt"
-	"log"
-	"sync"
-	"time"
 
-	"github.com/Julia-Marcal/reusable-api/config/env"
+	"sync"
+
 	database "github.com/Julia-Marcal/reusable-api/internal/user"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
-	once   sync.Once
-	client *mongo.Client
+	once = sync.Once{}
+	db   *gorm.DB
 )
 
-type Collections struct {
-	Users *mongo.Collection
-}
-
-func NewMongoDB() *mongo.Client {
+func NewPostgres() *gorm.DB {
 	once.Do(func() {
-		connectionStr := env.GetMongoConnectionString()
-
 		var err error
-		client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr))
-		if err != nil {
-			panic(err)
-		}
 
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-		err = client.Connect(ctx)
-		if err != nil {
-			log.Fatal(err)
-		}
+		connectionStr := "user=postgres password=password dbname=api_db host=postgres port=5432 sslmode=disable"
+		fmt.Println("about to connect to database")
 
-		err = client.Ping(ctx, nil)
+		db, err = gorm.Open(postgres.Open(connectionStr), &gorm.Config{
+			SkipDefaultTransaction: true,
+		})
 		if err != nil {
-			log.Fatal(err)
+			panic(fmt.Sprintf("failed to connect to database: %v", err))
 		}
-
-		fmt.Println("Successfully connected to MongoDB")
+		err = db.AutoMigrate(&database.User{})
+		if err != nil {
+			panic(fmt.Sprintf("failed to migrate database: %v", err))
+		}
 	})
 
-	return client
-}
-
-func GetCollections(client *mongo.Client) *Collections {
-	db := client.Database(env.GetDatabase())
-
-	return &Collections{
-		Users: database.CreateUsersCollection(db),
-	}
+	return db
 }

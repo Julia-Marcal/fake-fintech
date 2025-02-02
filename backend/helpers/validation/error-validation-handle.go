@@ -6,7 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func ErrorHandler(err error) bool {
+func ErrorHandler(err any) bool {
 	var errors bool
 
 	if err != nil {

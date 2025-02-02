@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-
 	database "github.com/Julia-Marcal/reusable-api/internal/user"
 	queries "github.com/Julia-Marcal/reusable-api/internal/user/queries"
 )
@@ -16,6 +14,5 @@ func NewDB() {
 		Password: "123456",
 	}
 
-	user_inf := queries.Create(user)
-	fmt.Println(user_inf)
+	queries.Create(user)
 }

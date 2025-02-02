@@ -18,14 +18,24 @@ type TokenRequest struct {
 func GenerateToken(context *gin.Context) {
 	var request TokenRequest
 
-	validated := validation.EmailPassValidator(request)
-	if err := context.ShouldBindJSON(&request); err != nil || validated {
+	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validated := validation.EmailPassValidator(validation.EmailPassStruct{
+		Email:    request.Email,
+		Password: request.Password,
+	})
+
+	if validated {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		context.Abort()
 		return
 	}
 
 	pass, err := queries.CheckPassword(request.Email)
+
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
