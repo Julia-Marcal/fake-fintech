@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	auth "github.com/Julia-Marcal/reusable-api/helpers/auth"
-	security "github.com/Julia-Marcal/reusable-api/helpers/security"
-	validation "github.com/Julia-Marcal/reusable-api/helpers/validation"
-	queries "github.com/Julia-Marcal/reusable-api/internal/user/queries"
+	auth "github.com/Julia-Marcal/fake-fintech/helpers/auth"
+	security "github.com/Julia-Marcal/fake-fintech/helpers/security"
+	validation "github.com/Julia-Marcal/fake-fintech/helpers/validation"
+	queries "github.com/Julia-Marcal/fake-fintech/internal/user/queries"
 	"github.com/gin-gonic/gin"
 )
 

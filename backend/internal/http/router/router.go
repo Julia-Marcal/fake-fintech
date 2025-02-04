@@ -1,8 +1,8 @@
 package router
 
 import (
-	middlewares "github.com/Julia-Marcal/reusable-api/helpers/middlewares"
-	controllers "github.com/Julia-Marcal/reusable-api/internal/http/controllers"
+	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
+	controllers "github.com/Julia-Marcal/fake-fintech/internal/http/controllers"
 
 	"github.com/gin-gonic/gin"
 

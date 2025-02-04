@@ -1,8 +1,8 @@
 package services
 
 import (
-	database "github.com/Julia-Marcal/reusable-api/internal/user"
-	queries "github.com/Julia-Marcal/reusable-api/internal/user/queries"
+	database "github.com/Julia-Marcal/fake-fintech/internal/user"
+	queries "github.com/Julia-Marcal/fake-fintech/internal/user/queries"
 )
 
 func NewDB() {

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	ratelimit "github.com/JGLTechnologies/gin-rate-limit"
-	cache "github.com/Julia-Marcal/reusable-api/internal/cache"
+	cache "github.com/Julia-Marcal/fake-fintech/internal/cache"
 	"github.com/gin-gonic/gin"
 )
 

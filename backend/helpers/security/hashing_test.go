@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	env "github.com/Julia-Marcal/reusable-api/config/env"
+	env "github.com/Julia-Marcal/fake-fintech/config/env"
 )
 
 func TestDeriveKey(t *testing.T) {

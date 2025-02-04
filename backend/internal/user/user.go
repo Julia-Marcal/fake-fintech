@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	env "github.com/Julia-Marcal/reusable-api/config/env"
-	security "github.com/Julia-Marcal/reusable-api/helpers/security"
+	env "github.com/Julia-Marcal/fake-fintech/config/env"
+	security "github.com/Julia-Marcal/fake-fintech/helpers/security"
 )
 
 type User struct {

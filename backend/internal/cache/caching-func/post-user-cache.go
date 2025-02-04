@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
-	cache "github.com/Julia-Marcal/reusable-api/internal/cache"
-	"github.com/Julia-Marcal/reusable-api/internal/user"
+	cache "github.com/Julia-Marcal/fake-fintech/internal/cache"
+	database "github.com/Julia-Marcal/fake-fintech/internal/user"
 )
 
 func CacheUser(user database.User) error {

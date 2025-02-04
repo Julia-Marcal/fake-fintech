@@ -5,7 +5,7 @@ import (
 
 	"sync"
 
-	database "github.com/Julia-Marcal/reusable-api/internal/user"
+	database "github.com/Julia-Marcal/fake-fintech/internal/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

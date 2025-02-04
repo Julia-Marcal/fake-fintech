@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	cache "github.com/Julia-Marcal/reusable-api/internal/cache"
-	"github.com/Julia-Marcal/reusable-api/internal/user"
+	cache "github.com/Julia-Marcal/fake-fintech/internal/cache"
+	database "github.com/Julia-Marcal/fake-fintech/internal/user"
 )
 
 func GetCachedUser(email string) (database.User, error) {

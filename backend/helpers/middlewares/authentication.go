@@ -3,7 +3,7 @@ package handlers
 import (
 	"strings"
 
-	auth "github.com/Julia-Marcal/reusable-api/helpers/auth"
+	auth "github.com/Julia-Marcal/fake-fintech/helpers/auth"
 	"github.com/gin-gonic/gin"
 )
 

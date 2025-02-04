@@ -16,6 +16,17 @@ services:
         aliases:
           - app
 
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - app
+    networks:
+      - monitoring
+    restart: unless-stopped
+
   postgres:
     image: postgres:latest
     environment:
@@ -34,16 +45,6 @@ services:
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    networks:
-      - mynetwork
-
   redis:
     image: redis:latest
     ports:
@@ -56,10 +57,7 @@ services:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 1s
       timeout: 3s
-      retries: 30
 
 networks:
-  mynetwork:
-    driver: bridge
   monitoring:
     driver: bridge

@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	services "github.com/Julia-Marcal/reusable-api/config"
-	db "github.com/Julia-Marcal/reusable-api/internal/database"
-	router "github.com/Julia-Marcal/reusable-api/internal/http/router"
+	services "github.com/Julia-Marcal/fake-fintech/config"
+	db "github.com/Julia-Marcal/fake-fintech/internal/database"
+	router "github.com/Julia-Marcal/fake-fintech/internal/http/router"
 )
 
 func main() {
