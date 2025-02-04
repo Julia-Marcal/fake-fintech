@@ -3,49 +3,38 @@ FROM golang:latest AS backend-builder
 
 WORKDIR /app/backend
 
-# Copia apenas arquivos essenciais para maximizar cache
-COPY backend/go.mod backend/go.sum
+# cache backend
+COPY backend/go.mod backend/go.sum ./
 
-# Debug: Check if the files exist after copying
-RUN ls -la /app/backend
-
-# Baixa as dependências do Go
 RUN go mod download
 
-# Copia o restante do código
 COPY backend/. .
 
-# Instala dependências do PostgreSQL e netcat
-RUN apt-get update && apt-get install -y postgresql-client netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/*
-
-# Instala dependências do Redis
 RUN go get github.com/redis/go-redis/v9
 
-# Copia o script wait-for-it.sh
 COPY backend/scripts/wait-for-it.sh /app/backend/wait-for-it.sh
 
 # Permissão para execução do script
 RUN chmod +x /app/backend/wait-for-it.sh
 
-# Compila a aplicação
-RUN go build -o fake-fintech
+# Compila back
+RUN go build -o /app/backend/fake-fintech ./main.go
 
 # ======================== Etapa 2: Build do Frontend ========================
 FROM node:18 AS frontend-builder
 
 WORKDIR /app/frontend
 
-# Copia apenas arquivos essenciais para maximizar cache
+# cache frontend
 COPY frontend/package.json frontend/package-lock.json ./
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
-# Copia o restante do código
 COPY frontend/. .
 
-# Compila a aplicação Angular
-RUN npm run build --prod
+RUN npm run build --prod 
+
+RUN ls -la /app/frontend/dist
 
 # ======================== Etapa 3: Runtime ========================
 FROM debian:bullseye-slim
@@ -58,7 +47,7 @@ RUN apt-get update && apt-get install -y postgresql-client netcat-openbsd \
 
 # Copia apenas os arquivos necessários do backend
 COPY --from=backend-builder /app/backend/fake-fintech .
-COPY --from=backend-builder /app/wait-for-it.sh .
+COPY --from=backend-builder /app/backend/wait-for-it.sh .
 
 # Copia os arquivos do frontend para servir
 COPY --from=frontend-builder /app/frontend/dist/frontend /app/frontend
