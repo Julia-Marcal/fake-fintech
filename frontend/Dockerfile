@@ -1,24 +1,23 @@
-# frontend/Dockerfile
-FROM node:22.13.1 AS frontend-builder
+# Use Node.js 20.11.1 as the base image for building the Angular app
+FROM node:20.11.1
 
-# Update npm globally
-RUN npm install -g npm@11.1.0
+# Install Angular CLI globally (use the version specified in the project)
+RUN npm install -g @angular/cli@latest
 
-RUN npm install -g @angular/cli
-
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to leverage Docker layer caching
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Install dependencies (force installation if there are conflicts)
-RUN npm install --legacy-peer-deps
+# Install project dependencies
+RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of the application files
 COPY . .
 
-# Expose the port (optional, since Docker Compose will handle this)
+# Expose port 4200
 EXPOSE 4200
 
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+# Start Angular development server
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "80"]

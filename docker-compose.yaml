@@ -5,43 +5,43 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: frontend-builder
+
     volumes:
       - ./frontend:/app/frontend
     ports:
-      - "4200:80"  # Map port 4200 on the host to port 80 in the container
+      - "80:80"
+    restart: unless-stopped
 
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #     target: backend-builder
+  #   volumes:
+  #     - ./backend:/app/backend
+  #   ports:
+  #     - "8080:8080" 
+  # postgres:
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: api_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - app_network
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      target: backend-builder
-    volumes:
-      - ./backend:/app/backend
-    ports:
-      - "8080:8080" 
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: api_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app_network
-
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - app_network
+  # redis:
+  #   image: redis:latest
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - app_network
 
 networks:
   app_network:
