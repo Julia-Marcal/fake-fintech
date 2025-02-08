@@ -5,48 +5,61 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-
     volumes:
       - ./frontend:/app/frontend
     ports:
       - "80:80"
     restart: unless-stopped
 
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #     target: backend-builder
-  #   volumes:
-  #     - ./backend:/app/backend
-  #   ports:
-  #     - "8080:8080" 
-  # postgres:
-  #   image: postgres:latest
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: api_db
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app_network
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8080:8080" 
 
-  # redis:
-  #   image: redis:latest
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   networks:
-  #     - app_network
+  postgres:
+    image: postgres:16  # or postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: your_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    networks: 
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: your@email.com
+      PGADMIN_DEFAULT_PASSWORD: your_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks: 
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
 
 networks:
-  app_network:
+  app-network:
     driver: bridge
 
 volumes:
   postgres_data:
+    name: fake-fintech_postgres_data
   redis_data:
+    name: fake-fintech_redis_data
