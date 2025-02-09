@@ -1,4 +1,3 @@
-
 # Fake Fintech
 
 ## Introduction
@@ -11,14 +10,14 @@ This project is structured with the following technologies:
 
 - **Backend**: Built in **Golang** using the **Gin** framework.
 - **Frontend**: The frontend is based on the **CoreUI** Angular 19 template, providing a responsive and modular UI for interacting with the backend.
-- **Database**: **MongoDB** is used to store and manage financial data.
+- **Database**: **PostgreSQL** is used to store and manage financial data.
 - **Cache**: Using **Redis**.
 
 ## Backend Setup
 
 ### Environment Configuration
 
-To ensure the proper setup of your environment, the `backend/config/env/env.go` file contains the configuration for connecting to MongoDB. Make sure your environment variables are set correctly.
+To ensure the proper setup of your environment, the `backend/config/env/env.go` file contains the configuration for connecting to PostgreSQL. Make sure your environment variables are set correctly.
 
 Example of `env.go` file:
 
@@ -31,27 +30,28 @@ import (
 )
 
 func setEnv() {
-	os.Setenv("MONGO_HOST", "0.0.0.0")       
-	os.Setenv("MONGO_PORT", "27017")           
-	os.Setenv("MONGO_USER", "myname")             
-	os.Setenv("MONGO_PASSWORD", "mypassword")      
-	os.Setenv("MONGO_DATABASE", "mydatabase")
+	os.Setenv("POSTGRES_HOST", "0.0.0.0")       
+	os.Setenv("POSTGRES_PORT", "5432")           
+	os.Setenv("POSTGRES_USER", "myname")         
+	os.Setenv("POSTGRES_PASSWORD", "mypassword")
+	os.Setenv("POSTGRES_DATABASE", "mydatabase")
 }
 
-func GetMongoConnectionString() string {
+func GetPostgresConnectionString() string {
 	setEnv()
-	host := os.Getenv("MONGO_HOST")
-	port := os.Getenv("MONGO_PORT")
-	user := os.Getenv("MONGO_USER")
-	password := os.Getenv("MONGO_PASSWORD")
+	host := os.Getenv("POSTGRES_HOST")
+	port := os.Getenv("POSTGRES_PORT")
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	database := os.Getenv("POSTGRES_DATABASE")
 
-	connectionStr := fmt.Sprintf("mongodb://%s:%s@%s:%s/?directConnection=true&authSource=admin", user, password, host, port)
+	connectionStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, database)
 	return connectionStr
 }
 
 func GetDatabase() string {
 	setEnv()
-	return os.Getenv("MONGO_DATABASE")
+	return os.Getenv("POSTGRES_DATABASE")
 }
 
 func SetSalt() []byte {
@@ -65,9 +65,9 @@ func SetSalt() []byte {
 1. **Install dependencies**:
    - Install [Go](https://golang.org/dl/) (Golang 1.18+ recommended).
    - Run the Docker Compose file to set up the backend environment.
-   
+
 2. **Run the backend**:
-   - Ensure that the `MONGO_*` environment variables are correctly set (as shown in the `env.go` file).
+   - Ensure that the `POSTGRES_*` environment variables are correctly set (as shown in the `env.go` file).
    - Start the backend service:
      ```bash
      go run main.go
@@ -125,50 +125,55 @@ Este projeto está estruturado com as seguintes tecnologias:
 
 - **Backend**: Construído em **Golang** usando o framework **Gin**.
 - **Frontend**: O frontend é baseado no template **CoreUI** Angular 19, proporcionando uma interface responsiva e modular para interação com o backend.
-- **Banco de Dados**: **MongoDB** é utilizado para armazenar e gerenciar os dados financeiros.
-- **Cache**: Usando **Redis**
+- **Banco de Dados**: **PostgreSQL** é utilizado para armazenar e gerenciar os dados financeiros.
+- **Cache**: Usando **Redis**.
 
 ## Configuração do Backend
 
 ### Configuração do Ambiente
 
-Para garantir a configuração correta do seu ambiente, o arquivo `backend/config/env/env.go` contém a configuração para a conexão com o MongoDB. Certifique-se de que as variáveis de ambiente estejam corretamente configuradas.
+Para garantir a configuração correta do seu ambiente, o arquivo `backend/config/env/env.go` contém a configuração para a conexão com o PostgreSQL. Certifique-se de que as variáveis de ambiente estejam corretamente configuradas.
 
-Exemplo do arquivo `env.go`:
+### Configuração do Backend
 
-```go
-package env
+1. **Instale as dependências**:
+   - Instale o [Go](https://golang.org/dl/) (Golang 1.18+ recomendado).
+   - Execute o Docker Compose para configurar o ambiente do backend.
 
-import (
-	"fmt"
-	"os"
-)
+2. **Execute o backend**:
+   - Certifique-se de que as variáveis de ambiente `POSTGRES_*` estejam corretamente configuradas.
+   - Inicie o backend:
+     ```bash
+     go run main.go
+     ```
 
-func setEnv() {
-	os.Setenv("MONGO_HOST", "0.0.0.0")       
-	os.Setenv("MONGO_PORT", "27017")          
-	os.Setenv("MONGO_USER", "meuusuario")     
-	os.Setenv("MONGO_PASSWORD", "minhasenha") 
-	os.Setenv("MONGO_DATABASE", "meubanco")   
-}
+## Configuração do Frontend
 
-func GetMongoConnectionString() string {
-	setEnv()
-	host := os.Getenv("MONGO_HOST")
-	port := os.Getenv("MONGO_PORT")
-	user := os.Getenv("MONGO_USER")
-	password := os.Getenv("MONGO_PASSWORD")
+O frontend é construído em **Angular 19** e baseado no template **CoreUI**, oferecendo uma interface amigável para interagir com o backend.
 
-	connectionStr := fmt.Sprintf("mongodb://%s:%s@%s:%s/?directConnection=true&authSource=admin", user, password, host, port)
-	return connectionStr
-}
+### Configuração do Frontend
 
-func GetDatabase() string {
-	setEnv()
-	return os.Getenv("MONGO_DATABASE")
-}
+1. **Clone o repositório**:
+   ```bash
+   git clone https://github.com/your-username/fake-fintech-frontend.git
+   cd fake-fintech-frontend
+   ```
 
-func SetSalt() []byte {
-	your_salt := "MinhaSalt"
-	return []byte(your_salt)
-}
+2. **Instale as dependências**:
+   - Instale o [Node.js](https://nodejs.org/en/download/) (recomendado v16 ou superior).
+   - Instale as dependências do frontend:
+     ```bash
+     npm install
+     ```
+
+3. **Execute o frontend**:
+   - Inicie a aplicação Angular:
+     ```bash
+     ng serve
+     ```
+   - O app estará acessível em `http://localhost:4200`.
+
+## Desenvolvimento Futuro
+
+No futuro, este projeto integrará APIs financeiras para buscar dados em tempo real e expandir suas funcionalidades com recursos avançados como análise de transações, cálculos de empréstimos e gerenciamento de portfólio.
+
