@@ -38,7 +38,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/scss/styles.scss"
+              "src/styles/styles.scss"
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [],
@@ -106,7 +106,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/scss/styles.scss"
+              "src/styles/styles.scss"
             ],
             "scripts": []
           }
