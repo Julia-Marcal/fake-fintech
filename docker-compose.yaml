@@ -11,17 +11,8 @@ services:
       - "80:80"
     restart: unless-stopped
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app/backend
-    ports:
-      - "8080:8080" 
-
   postgres:
-    image: postgres:16  # or postgres:latest
+    image: postgres:16
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -30,7 +21,7 @@ services:
       POSTGRES_PASSWORD: your_password
     ports:
       - "5432:5432"
-    networks: 
+    networks:
       - app-network
 
   pgadmin:
@@ -39,10 +30,10 @@ services:
       PGADMIN_DEFAULT_EMAIL: your@email.com
       PGADMIN_DEFAULT_PASSWORD: your_password
     ports:
-      - "8080:80"
+      - "4000:80"
     depends_on:
       - postgres
-    networks: 
+    networks:
       - app-network
 
   redis:
@@ -51,6 +42,25 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DATABASE: your_db
+    depends_on:
+      - postgres
     networks:
       - app-network
 
