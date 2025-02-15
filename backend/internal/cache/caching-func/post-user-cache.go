@@ -6,7 +6,7 @@ import (
 	"time"
 
 	cache "github.com/Julia-Marcal/fake-fintech/internal/cache"
-	database "github.com/Julia-Marcal/fake-fintech/internal/user"
+	database "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
 )
 
 func CacheUser(user database.User) error {

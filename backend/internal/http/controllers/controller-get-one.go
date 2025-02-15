@@ -5,7 +5,7 @@ import (
 
 	validation "github.com/Julia-Marcal/fake-fintech/helpers/validation"
 	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func"
-	queries "github.com/Julia-Marcal/fake-fintech/internal/user/queries"
+	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 	"github.com/gin-gonic/gin"
 )
 

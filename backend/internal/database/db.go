@@ -1,10 +1,11 @@
-package repository
+package database
 
 import (
 	"fmt"
-	"sync"
 	"os"
-	database "github.com/Julia-Marcal/fake-fintech/internal/user"
+	"sync"
+
+	user "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -34,7 +35,7 @@ func NewPostgres() *gorm.DB {
 		if err != nil {
 			panic(fmt.Sprintf("failed to connect to database: %v", err))
 		}
-		err = db.AutoMigrate(&database.User{})
+		err = db.AutoMigrate(&user.User{})
 		if err != nil {
 			panic(fmt.Sprintf("failed to migrate database: %v", err))
 		}

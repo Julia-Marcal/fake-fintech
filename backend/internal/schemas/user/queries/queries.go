@@ -2,7 +2,7 @@ package queries
 
 import (
 	repository "github.com/Julia-Marcal/fake-fintech/internal/database"
-	database "github.com/Julia-Marcal/fake-fintech/internal/user"
+	database "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
 	_ "github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	queries "github.com/Julia-Marcal/fake-fintech/internal/user/queries"
+	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 	"github.com/gin-gonic/gin"
 )
 
