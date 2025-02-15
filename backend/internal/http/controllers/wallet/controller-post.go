@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateUser(c *gin.Context) {
+func CreateWallet(c *gin.Context) {
 	var wallet database.Wallet
 
 	validated := validation.WalletValidator(wallet)
