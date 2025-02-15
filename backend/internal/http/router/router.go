@@ -2,7 +2,7 @@ package router
 
 import (
 	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
-	controllers "github.com/Julia-Marcal/fake-fintech/internal/http/controllers"
+	controllers "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/users"
 
 	"github.com/gin-gonic/gin"
 

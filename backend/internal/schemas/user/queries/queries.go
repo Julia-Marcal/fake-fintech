@@ -1,4 +1,4 @@
-package queries
+package queries_users
 
 import (
 	repository "github.com/Julia-Marcal/fake-fintech/internal/database"
