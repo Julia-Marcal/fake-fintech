@@ -30,11 +30,21 @@ import (
 )
 
 func setEnv() {
-	os.Setenv("POSTGRES_HOST", "0.0.0.0")       
-	os.Setenv("POSTGRES_PORT", "5432")           
-	os.Setenv("POSTGRES_USER", "myname")         
-	os.Setenv("POSTGRES_PASSWORD", "mypassword")
-	os.Setenv("POSTGRES_DATABASE", "mydatabase")
+	host := os.Getenv("POSTGRES_HOST")
+	port := os.Getenv("POSTGRES_PORT")
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	database := os.Getenv("POSTGRES_DATABASE")
+
+	if host == "" || port == "" || user == "" || password == "" || database == "" {
+		panic("Missing required environment variables for PostgreSQL connection")
+	}
+
+	os.Setenv("POSTGRES_HOST", host)
+	os.Setenv("POSTGRES_PORT", port)
+	os.Setenv("POSTGRES_USER", user)
+	os.Setenv("POSTGRES_PASSWORD", password)
+	os.Setenv("POSTGRES_DATABASE", database)
 }
 
 func GetPostgresConnectionString() string {

@@ -1,29 +1,6 @@
 import { Routes } from '@angular/router';
-import { DefaultLayoutComponent } from './layout';
 
 export const routes: Routes = [
-  // children: [
-  //   {
-  //     path: 'theme',
-  //     loadChildren: () => import('../shared/base/theme/routes').then((m) => m.routes)
-  //   },
-  //   {
-  //     path: 'base',
-  //     loadChildren: () => import('../shared/base/routes').then((m) => m.routes)
-  //   },
-  //   {
-  //     path: 'pages',
-  //     loadChildren: () => import('./routes').then((m) => m.routes)
-  //   }
-  // ]
-
-  {
-    path: 'home',
-    component: DefaultLayoutComponent,
-    data: {
-      title: 'Home'
-    }
-  },
   {
     path: '404',
     loadComponent: () => import('./features/page404/page404.component').then(m => m.Page404Component),
@@ -44,6 +21,5 @@ export const routes: Routes = [
     data: {
       title: 'Register Page'
     }
-  },
-  { path: '**', redirectTo: 'login' }
+  }
 ];
