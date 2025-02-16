@@ -10,6 +10,7 @@ import (
 type Wallet struct {
 	Id        string     `gorm:"primaryKey"`
 	UserId    string     `gorm:"not null"`
+	Name      string     `gorm:"not null;size:50" sql:"index"`
 	CreatedAt *time.Time `gorm:"default:current_timestamp"`
 	UpdatedAt *time.Time `gorm:"default:current_timestamp"`
 }
