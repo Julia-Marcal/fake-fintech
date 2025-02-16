@@ -5,7 +5,10 @@ import (
 	"os"
 	"sync"
 
+	acoes "github.com/Julia-Marcal/fake-fintech/internal/schemas/acoes"
 	user "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
+	wallet "github.com/Julia-Marcal/fake-fintech/internal/schemas/wallet"
+	walletAcoes "github.com/Julia-Marcal/fake-fintech/internal/schemas/walletAcoes"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -33,9 +36,22 @@ func NewPostgres() *gorm.DB {
 			SkipDefaultTransaction: true,
 		})
 		if err != nil {
-			panic(fmt.Sprintf("failed to connect to database: %v", err))
+			panic(fmt.Sprintf("failed ]o connect to database: %v", err))
 		}
-		err = db.AutoMigrate(&user.User{})
+
+		schemas := []interface{}{
+			&user.User{},
+			&wallet.Wallet{},
+			&walletAcoes.WalletAcoes{},
+			&acoes.Acoes{},
+		}
+		for _, schema := range schemas {
+			if err := db.AutoMigrate(schema); err != nil {
+				panic(fmt.Sprintf("failed to auto-migrate database: %v", err))
+
+			}
+		}
+
 		if err != nil {
 			panic(fmt.Sprintf("failed to migrate database: %v", err))
 		}
