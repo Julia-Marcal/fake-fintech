@@ -34,7 +34,10 @@ func StartRouter() {
 			authorized.GET("user/", rateLimiter, users.GetUser)
 			authorized.GET("users/", rateLimiter, users.GetAllUsers)
 			authorized.DELETE("users/:id", rateLimiter, users.DeleteUser)
-			authorized.POST("/wallet", rateLimiter, wallet.CreateWallet)
+
+			authorized.POST("/wallet/", rateLimiter, wallet.CreateWallet)
+			authorized.GET("/wallet/:id_wallet", rateLimiter, wallet.GetWallet)
+			authorized.GET("/all_wallets/:id_user", rateLimiter, wallet.GetAllWallets)
 		}
 	}
 
