@@ -20,12 +20,15 @@ func FindUser(email string) (*database.User, error) {
 	return user, result.Error
 }
 
-func FindUsers() (int64, error) {
+func FindUsers(limit int) ([]database.User, error) {
 	db := repository.NewPostgres()
 	var users []database.User
-	result := db.Limit(10).Find(&users)
-	return result.RowsAffected, result.Error
+
+	result := db.Limit(limit).Find(&users) 
+
+	return users, result.Error
 }
+
 
 func DeleteOne(id string) *gorm.DB {
 	db := repository.NewPostgres()
