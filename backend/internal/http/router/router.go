@@ -32,7 +32,7 @@ func StartRouter() {
 		authorized := api.Group("/v1/").Use(middlewares.Auth())
 		{
 			authorized.GET("user/", rateLimiter, users.GetUser)
-			authorized.GET("users/", rateLimiter, users.GetAllUsers)
+			authorized.GET("users/*limit", rateLimiter, users.GetAllUsers)
 			authorized.DELETE("users/:id", rateLimiter, users.DeleteUser)
 
 			authorized.POST("/wallet/", rateLimiter, wallet.CreateWallet)
