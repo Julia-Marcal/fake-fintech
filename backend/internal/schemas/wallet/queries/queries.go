@@ -19,9 +19,11 @@ func FindWallet(id_wallet string) (*database.Wallet, error) {
 	return wallet, result.Error
 }
 
-func FindWallets(id_user string) (int64, error) {
+func FindWallets(id_user string) ([]database.Wallet, error) {
 	db := repository.NewPostgres()
-	wallet := &database.Wallet{}
-	result := db.First(wallet, "id_user = ?", id_user)
-	return result.RowsAffected, result.Error
+	var wallets []database.Wallet
+
+	result := db.Where("user_id = ?", id_user).Find(&wallets)
+
+	return wallets, result.Error
 }

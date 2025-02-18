@@ -1,7 +1,6 @@
 package wallet_controller
 
 import (
-	"fmt"
 	"net/http"
 
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/wallet/queries"
@@ -9,8 +8,7 @@ import (
 )
 
 func GetWallet(c *gin.Context) {
-	walletId, exists := c.Params.Get("id")
-	fmt.Printf("%s", walletId)
+	walletId, exists := c.Params.Get("id_wallet")
 
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{
