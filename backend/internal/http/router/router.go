@@ -2,8 +2,10 @@ package router
 
 import (
 	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
+	acoes "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/acoes"
 	users "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/users"
 	wallet "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/wallet"
+	wallet_acoes "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/wallet_acoes"
 
 	"github.com/gin-gonic/gin"
 
@@ -38,6 +40,9 @@ func StartRouter() {
 			authorized.POST("/wallet/", rateLimiter, wallet.CreateWallet)
 			authorized.GET("/wallet/:id_wallet", rateLimiter, wallet.GetWallet)
 			authorized.GET("/all_wallets/:id_user", rateLimiter, wallet.GetAllWallets)
+
+			authorized.POST("/acoes/", rateLimiter, acoes.CreateAcoes)
+			authorized.GET("/wallet_acoes/:id_wallet", rateLimiter, wallet_acoes.GetWalletAcoes)
 		}
 	}
 

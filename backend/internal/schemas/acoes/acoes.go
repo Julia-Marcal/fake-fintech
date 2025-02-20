@@ -12,6 +12,7 @@ type Acoes struct {
 	Name      string     `gorm:"not null"`
 	Type      string     `gorm:"not null"`
 	Price     float64    `gorm:"not null"`
+	Quantity  float64    `gorm:"not null" validate:"gte=1"`
 	CreatedAt *time.Time `gorm:"default:current_timestamp"`
 	UpdatedAt *time.Time `gorm:"default:current_timestamp"`
 }
