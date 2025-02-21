@@ -1,4 +1,4 @@
-package wallet_controller
+package acoes_controller
 
 import (
 	"net/http"
