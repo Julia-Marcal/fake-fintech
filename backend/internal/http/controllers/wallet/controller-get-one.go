@@ -3,6 +3,7 @@ package wallet_controller
 import (
 	"net/http"
 
+	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func/wallet"
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/wallet/queries"
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,16 @@ func GetWallet(c *gin.Context) {
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Wallet ID is required",
+		})
+		return
+	}
+
+	cachedWallet, cacheErr := cache.GetCachedWallet(walletId)
+
+	if cachedWallet.Id != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Wallet retrieved from cache",
+			"wallet":  cachedWallet,
 		})
 		return
 	}
@@ -32,8 +43,16 @@ func GetWallet(c *gin.Context) {
 		return
 	}
 
+	cacheErr = cache.CacheWallet(*wallet)
+	if cacheErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to cache wallet",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Wallet returned successfully",
-		"user":    wallet,
+		"wallet":  wallet,
 	})
 }
