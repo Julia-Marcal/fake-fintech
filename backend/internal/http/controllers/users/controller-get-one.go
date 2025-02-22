@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	validation "github.com/Julia-Marcal/fake-fintech/helpers/validation"
-	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func"
+	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func/user"
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 	"github.com/gin-gonic/gin"
 )

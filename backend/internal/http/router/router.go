@@ -42,6 +42,8 @@ func StartRouter() {
 			authorized.GET("/all_wallets/:id_user", rateLimiter, wallet.GetAllWallets)
 
 			authorized.POST("/acoes/", rateLimiter, acoes.CreateAcoes)
+			authorized.GET("/acoes/:id_acao", rateLimiter, acoes.GetAcoes)
+
 			authorized.GET("/wallet_acoes/:id_wallet", rateLimiter, wallet_acoes.GetWalletAcoes)
 		}
 	}
