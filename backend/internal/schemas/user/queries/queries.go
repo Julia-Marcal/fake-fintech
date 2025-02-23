@@ -43,3 +43,20 @@ func CheckPassword(email string) (string, error) {
 	result := db.First(user, "email = ?", email)
 	return user.Password, result.Error
 }
+
+func totalAmountByUser(userId string) (float64, error) {
+    db := repository.NewPostgres()
+    var totalAmount float64
+
+    result := db.Table("acoes").
+        Select("SUM(acoes.price * acoes.quantity) as total").
+        Joins("JOIN wallet_acoes ON wallet_acoes.acoes_id = acoes.id").
+        Joins("JOIN wallet ON wallet.id = wallet_acoes.wallet_id AND wallet.userid = ?", userId).
+        Scan(&totalAmount)
+
+    if result.Error != nil {
+        return 0, result.Error
+    }
+
+    return totalAmount, nil
+}
