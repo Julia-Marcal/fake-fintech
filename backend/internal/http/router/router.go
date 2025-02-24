@@ -34,6 +34,7 @@ func StartRouter() {
 		authorized := api.Group("/v1/").Use(middlewares.Auth())
 		{
 			authorized.GET("user/", rateLimiter, users.GetUser)
+			authorized.GET("user/total_amount/:id_user", rateLimiter, users.TotalAmount)
 			authorized.GET("users/*limit", rateLimiter, users.GetAllUsers)
 			authorized.DELETE("users/:id", rateLimiter, users.DeleteUser)
 
