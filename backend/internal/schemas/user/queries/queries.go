@@ -24,11 +24,10 @@ func FindUsers(limit int) ([]database.User, error) {
 	db := repository.NewPostgres()
 	var users []database.User
 
-	result := db.Limit(limit).Find(&users) 
+	result := db.Limit(limit).Find(&users)
 
 	return users, result.Error
 }
-
 
 func DeleteOne(id string) *gorm.DB {
 	db := repository.NewPostgres()
@@ -44,19 +43,19 @@ func CheckPassword(email string) (string, error) {
 	return user.Password, result.Error
 }
 
-func totalAmountByUser(userId string) (float64, error) {
-    db := repository.NewPostgres()
-    var totalAmount float64
+func TotalAmountByUser(userId string) (float64, error) {
+	db := repository.NewPostgres()
+	var totalAmount float64
 
-    result := db.Table("acoes").
-        Select("SUM(acoes.price * acoes.quantity) as total").
-        Joins("JOIN wallet_acoes ON wallet_acoes.acoes_id = acoes.id").
-        Joins("JOIN wallet ON wallet.id = wallet_acoes.wallet_id AND wallet.userid = ?", userId).
-        Scan(&totalAmount)
+	result := db.Table("acoes").
+		Select("COALESCE(SUM(acoes.price * acoes.quantity), 0) as total").
+		Joins("JOIN wallet_acoes ON wallet_acoes.acoes_id = acoes.id").
+		Joins("JOIN wallets ON wallets.id = wallet_acoes.wallet_id AND wallets.user_id = ?", userId).
+		Scan(&totalAmount)
 
-    if result.Error != nil {
-        return 0, result.Error
-    }
+	if result.Error != nil {
+		return 0, result.Error
+	}
 
-    return totalAmount, nil
+	return totalAmount, nil
 }

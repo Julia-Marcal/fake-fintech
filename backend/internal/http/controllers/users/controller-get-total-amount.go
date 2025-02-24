@@ -6,6 +6,7 @@ import (
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 	"github.com/gin-gonic/gin"
 )
+
 func TotalAmount(c *gin.Context) {
 	userId, exists := c.Params.Get("id_user")
 
@@ -16,7 +17,7 @@ func TotalAmount(c *gin.Context) {
 		return
 	}
 
-	amount, err := queries.totalAmountByUser(userId)
+	amount, err := queries.TotalAmountByUser(userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -24,9 +25,8 @@ func TotalAmount(c *gin.Context) {
 		return
 	}
 
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Amount returned successfully",
-		"amount":    amount,
+		"amount":  amount,
 	})
 }
