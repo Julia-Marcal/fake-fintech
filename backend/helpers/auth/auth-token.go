@@ -2,25 +2,28 @@ package auth
 
 import (
 	"errors"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var jwtKey = []byte("supersecretkey")
+var jwtKey = []byte(os.Getenv("jwtKey"))
 
 type JWTClaim struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(email string, username string) (tokenString string, err error) {
+func GenerateJWT(email string, username string, role string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 
 	claims := &JWTClaim{
 		Email:    email,
 		Username: username,
+		Role:     role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

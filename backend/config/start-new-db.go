@@ -12,6 +12,7 @@ func NewDB() {
 		Age:      18,
 		Email:    "gmail@gmail.com",
 		Password: "123456",
+		Role:     "admin",
 	}
 
 	queries.Create(user)

@@ -36,7 +36,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := queries.FindUser(request.Email)
+	user, err := queries.FindUserByEmail(request.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

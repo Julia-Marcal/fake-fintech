@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sync"
 
@@ -30,13 +31,13 @@ func NewPostgres() *gorm.DB {
 			os.Getenv("POSTGRES_PASSWORD"),
 			os.Getenv("POSTGRES_DATABASE"),
 		)
-		fmt.Println("about to connect to database with connection string:", connectionStr)
+		log.Println("about to connect to database with connection string:", connectionStr)
 
 		db, err = gorm.Open(postgres.Open(connectionStr), &gorm.Config{
 			SkipDefaultTransaction: true,
 		})
 		if err != nil {
-			panic(fmt.Sprintf("failed ]o connect to database: %v", err))
+			log.Fatalf("failed to connect to database: %v", err)
 		}
 
 		schemas := []interface{}{
@@ -47,13 +48,9 @@ func NewPostgres() *gorm.DB {
 		}
 		for _, schema := range schemas {
 			if err := db.AutoMigrate(schema); err != nil {
-				panic(fmt.Sprintf("failed to auto-migrate database: %v", err))
-
+				log.Printf("failed to auto-migrate schema %T: %v", schema, err)
+				// handle the error appropriately
 			}
-		}
-
-		if err != nil {
-			panic(fmt.Sprintf("failed to migrate database: %v", err))
 		}
 	})
 

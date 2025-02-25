@@ -17,6 +17,7 @@ type User struct {
 	Age       int32      `gorm:"not null"`
 	Email     string     `gorm:"uniqueIndex"`
 	Password  string     `gorm:"not null"`
+	Role      string     `gorm:"not null;check:role IN ('admin', 'user')"`
 	CreatedAt *time.Time `gorm:"default:current_timestamp"`
 	UpdatedAt *time.Time `gorm:"default:current_timestamp"`
 }
