@@ -12,6 +12,7 @@ type UserStruct struct {
 	Age      string `validate:"gte=0, lte=130"`
 	Email    string `validate:"required,email"`
 	Password string `validate:"required"`
+	Role     string `validate:"required,oneof=admin user"`
 }
 
 func UserValidator(user database.User) bool {
