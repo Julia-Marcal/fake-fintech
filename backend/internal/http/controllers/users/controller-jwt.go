@@ -52,7 +52,7 @@ func GenerateToken(context *gin.Context) {
 	}
 
 	userInfo, _ := queries.FindUserByEmail(request.Email)
-	tokenString, err := auth.GenerateJWT(userInfo.Email, userInfo.Name, userInfo.Role)
+	tokenString, err := auth.GenerateJWT(userInfo.Id, userInfo.Name, userInfo.Role)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		context.Abort()

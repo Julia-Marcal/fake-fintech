@@ -3,7 +3,7 @@ package auth
 import "testing"
 
 func TestGenerateToken(t *testing.T) {
-	tokenTest, err := GenerateJWT("test@gmail.com", "test", "user")
+	tokenTest, err := GenerateJWT("123", "test", "user")
 	if err != nil {
 		t.Errorf("error: %v", err)
 	}
@@ -14,7 +14,7 @@ func TestGenerateToken(t *testing.T) {
 }
 
 func TestValidateToken(t *testing.T) {
-	tokenTest, _ := GenerateJWT("test@gmail.com", "test", "user")
+	tokenTest, _ := GenerateJWT("123", "test", "user")
 	ValidationErr := ValidateToken(tokenTest)
 
 	if ValidationErr != nil {
