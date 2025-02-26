@@ -20,6 +20,13 @@ func FindUserByEmail(email string) (*database.User, error) {
 	return user, result.Error
 }
 
+func FindUserById(id string) (*database.User, error) {
+	db := repository.NewPostgres()
+	user := &database.User{}
+	result := db.First(user, "id = ?", id)
+	return user, result.Error
+}
+
 func FindUsers(limit int) ([]database.User, error) {
 	db := repository.NewPostgres()
 	var users []database.User
