@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -10,13 +11,13 @@ import (
 )
 
 type JWTClaim struct {
-	Email    string `json:"email"`
+	Id       string `json:"id"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func RoleBasedAccess(requiredRole string, requiredEmail string) gin.HandlerFunc {
+func RoleBasedAccess(requiredRole string, requiredId string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -38,17 +39,17 @@ func RoleBasedAccess(requiredRole string, requiredEmail string) gin.HandlerFunc 
 			return
 		}
 
-		if requiredRole != "" {
-			if claims.Role != requiredRole {
+		log.Printf("Claims: %+v\n", claims)
+		log.Printf("Required Role: %s\n", requiredRole)
+		log.Printf("Required ID: %s\n", requiredId)
+
+		if claims.Role != requiredRole {
+			if claims.Id != requiredId {
 				c.JSON(http.StatusForbidden, gin.H{"error": "You do not have permission to access this resource"})
 				c.Abort()
 				return
-			}
-		}
-
-		if requiredEmail != "" {
-			if claims.Role != requiredEmail {
-				c.JSON(http.StatusForbidden, gin.H{"error": "You do not have permission to access this resource"})
+			} else {
+				c.JSON(http.StatusForbidden, gin.H{"error": "You do not have the required role to access this resource"})
 				c.Abort()
 				return
 			}
