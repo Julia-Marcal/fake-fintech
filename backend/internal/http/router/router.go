@@ -36,23 +36,9 @@ func StartRouter() {
 		{
 			userGroup := authorized.Group("/user")
 			{
-				userGroup.GET("/:id_user", rateLimiter, func(c *gin.Context) {
-					idUser := c.Param("id_user")
-					middlewares.RoleBasedAccess("admin", idUser)(c)
-					users.GetUser(c)
-				})
-
-				userGroup.PATCH("/:id_user", rateLimiter, func(c *gin.Context) {
-					idUser := c.Param("id_user")
-					middlewares.RoleBasedAccess("admin", idUser)(c)
-					users.UpdateUser(c)
-				})
-
-				userGroup.GET("/total_amount/:id_user", rateLimiter, func(c *gin.Context) {
-					idUser := c.Param("id_user")
-					middlewares.RoleBasedAccess("admin", idUser)(c)
-					users.TotalAmount(c)
-				})
+				userGroup.GET("/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.GetUser)
+				userGroup.PATCH("/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.UpdateUser)
+				userGroup.GET("/total_amount/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.TotalAmount)
 			}
 
 			usersGroup := authorized.Group("/users")
