@@ -13,10 +13,17 @@ func Create(user_info *database.User) error {
 	return result.Error
 }
 
-func FindUser(email string) (*database.User, error) {
+func FindUserByEmail(email string) (*database.User, error) {
 	db := repository.NewPostgres()
 	user := &database.User{}
 	result := db.First(user, "email = ?", email)
+	return user, result.Error
+}
+
+func FindUserById(id string) (*database.User, error) {
+	db := repository.NewPostgres()
+	user := &database.User{}
+	result := db.First(user, "id = ?", id)
 	return user, result.Error
 }
 
@@ -58,4 +65,10 @@ func TotalAmountByUser(userId string) (float64, error) {
 	}
 
 	return totalAmount, nil
+}
+
+func Update(user_info *database.User) error {
+	db := repository.NewPostgres()
+	result := db.Save(user_info)
+	return result.Error
 }

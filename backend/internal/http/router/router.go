@@ -31,24 +31,43 @@ func StartRouter() {
 		api.GET("/metrics", rateLimiter, middlewares.PrometheusHandler())
 		api.POST("/users", rateLimiter, users.CreateUser)
 
-		authorized := api.Group("/v1/").Use(middlewares.Auth())
+		authorized := api.Group("/v1")
+		authorized.Use(middlewares.Auth())
 		{
-			authorized.GET("user/", rateLimiter, users.GetUser)
-			authorized.GET("user/total_amount/:id_user", rateLimiter, users.TotalAmount)
-			authorized.GET("users/*limit", rateLimiter, users.GetAllUsers)
-			authorized.DELETE("users/:id", rateLimiter, users.DeleteUser)
+			userGroup := authorized.Group("/user")
+			{
+				userGroup.GET("/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.GetUser)
+				userGroup.PATCH("/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.UpdateUser)
+				userGroup.GET("/total_amount/:id_user", rateLimiter, middlewares.RoleBasedAccess("admin"), users.TotalAmount)
+			}
 
-			authorized.POST("/wallet/", rateLimiter, wallet.CreateWallet)
-			authorized.GET("/wallet/:id_wallet", rateLimiter, wallet.GetWallet)
-			authorized.GET("/all_wallets/:id_user", rateLimiter, wallet.GetAllWallets)
+			usersGroup := authorized.Group("/users")
+			{
+				usersGroup.GET("/*limit", rateLimiter, users.GetAllUsers)
+				usersGroup.DELETE("/:id", rateLimiter, users.DeleteUser)
+			}
 
-			authorized.POST("/acoes/", rateLimiter, acoes.CreateAcoes)
-			authorized.GET("/acoes/:id_acao", rateLimiter, acoes.GetAcoes)
+			walletGroup := authorized.Group("/wallet")
+			{
+				walletGroup.POST("/", rateLimiter, wallet.CreateWallet)
+				walletGroup.GET("/:id_wallet", rateLimiter, wallet.GetWallet)
+				walletGroup.GET("/all_wallets/:id_user", rateLimiter, wallet.GetAllWallets)
+			}
 
-			authorized.GET("/wallet_acoes/:id_wallet", rateLimiter, wallet_acoes.GetWalletAcoes)
+			acoesGroup := authorized.Group("/acoes")
+			{
+				acoesGroup.POST("/", rateLimiter, acoes.CreateAcoes)
+				acoesGroup.GET("/:id_acao", rateLimiter, acoes.GetAcoes)
+			}
+
+			walletAcoesGroup := authorized.Group("/wallet_acoes")
+			{
+				walletAcoesGroup.GET("/:id_wallet", rateLimiter, wallet_acoes.GetWalletAcoes)
+			}
 		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.Run()
 }
