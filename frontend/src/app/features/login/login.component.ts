@@ -8,6 +8,7 @@ import {
 } from '@coreui/angular';
 import { AuthService } from '../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms'
 
 @Component({
     selector: 'app-login',
@@ -17,7 +18,7 @@ import { Router } from '@angular/router';
     imports: [
       ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective,
       CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective,
-      IconDirective, FormControlDirective, ButtonDirective, NgStyle
+      IconDirective, FormControlDirective, ButtonDirective, NgStyle, FormsModule
     ],
     
 })
@@ -31,7 +32,7 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Login successful', response);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         console.error('Login failed', error);

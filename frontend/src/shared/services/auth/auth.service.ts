@@ -40,7 +40,7 @@ export class AuthService {
             username: string;
             role: string;
             email: string;
-          }>(response.access_token);
+          }>(response.token);
 
           response.user = decodedToken;
 

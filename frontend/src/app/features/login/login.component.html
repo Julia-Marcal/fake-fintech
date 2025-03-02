@@ -12,23 +12,18 @@
                   <span cInputGroupText>
                     <svg cIcon name="cilUser"></svg>
                   </span>
-                  <input autoComplete="email" cFormControl placeholder="Email" />
+                  <input autoComplete="email" cFormControl placeholder="Email" name="email" [(ngModel)]="email" />
                 </c-input-group>
                 <c-input-group class="mb-4">
                   <span cInputGroupText>
                     <svg cIcon name="cilLockLocked"></svg>
                   </span>
-                  <input
-                    autoComplete="current-password"
-                    cFormControl
-                    placeholder="Password"
-                    type="password"
-                  />
+                  <input autoComplete="current-password" cFormControl placeholder="Password" name="password"
+                    [(ngModel)]="password" />
                 </c-input-group>
                 <c-row>
                   <c-col xs="6">
-                    <button cButton class="px-4" color="primary"
-                      (click)="onSubmit()">
+                    <button cButton class="px-4" color="primary" (click)="onSubmit()">
                       Login
                     </button>
                   </c-col>

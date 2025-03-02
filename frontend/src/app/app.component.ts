@@ -15,7 +15,6 @@ import { AuthService } from './shared/services/auth/auth.service';
     template: '<router-outlet />',
     imports: [
       RouterOutlet,
-      HttpClientModule
     ],
 })
 export class AppComponent implements OnInit {
