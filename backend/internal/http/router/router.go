@@ -1,6 +1,8 @@
 package router
 
 import (
+	"time"
+
 	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
 	acoes "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/acoes"
 	users "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/users"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/gin-contrib/cors"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -22,6 +25,16 @@ import (
 
 func StartRouter() {
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 12 * time.Hour
+
+	router.Use(cors.New(config))
 
 	rateLimiter := middlewares.RateLimiting()
 
