@@ -9,13 +9,13 @@ import (
 	database "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
 )
 
-func GetCachedUser(email string) (database.User, error) {
+func GetCachedUser(id string) (database.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	RedisClient, _ := cache.RedisInit()
 
-	userData, err := RedisClient.HGetAll(ctx, "user:"+email).Result()
+	userData, err := RedisClient.HGetAll(ctx, "user:"+id).Result()
 	if err != nil {
 		return database.User{}, err
 	}

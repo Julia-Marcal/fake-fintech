@@ -3,30 +3,15 @@ package user_controller
 import (
 	"net/http"
 
-	validation "github.com/Julia-Marcal/fake-fintech/helpers/validation"
 	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func/user"
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 	"github.com/gin-gonic/gin"
 )
 
-type UserRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func GetUser(c *gin.Context) {
-	var request UserRequest
+	userId := c.Param("id_user")
 
-	validated := validation.EmailPassValidator(request)
-
-	if err := c.ShouldBindJSON(&request); err != nil || validated {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid input data",
-		})
-		return
-	}
-
-	cachedUser, cacheErr := cache.GetCachedUser(request.Email)
+	cachedUser, _ := cache.GetCachedUser(userId)
 
 	if cachedUser.Id != "" {
 		c.JSON(http.StatusOK, gin.H{
@@ -36,7 +21,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := queries.FindUser(request.Email)
+	user, err := queries.FindUserById(userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -51,7 +36,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	cacheErr = cache.CacheUser(*user)
+	cacheErr := cache.CacheUser(*user)
 	if cacheErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to cache user",
