@@ -4,33 +4,64 @@
       <c-col lg="7" md="9" xl="6">
         <c-card class="mx-4">
           <c-card-body class="p-4">
-            <form cForm>
+            <form cForm [formGroup]="registerForm" (ngSubmit)="onSubmit()">
               <h1>Register</h1>
               <p class="text-body-secondary">Create your account</p>
+
               <c-input-group class="mb-3">
                 <span cInputGroupText>
                   <svg cIcon name="cilUser"></svg>
                 </span>
-                <input autoComplete="name" cFormControl placeholder="Username" />
+                <input autoComplete="name" cFormControl placeholder="Name" formControlName="name" />
               </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilUser"></svg>
+                </span>
+                <input autoComplete="lastName" cFormControl placeholder="Last Name" formControlName="lastName" />
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="bay"></svg>
+                </span>
+
+                <input autoComplete="age" cFormControl placeholder="Age" type="number" formControlName="age" />
+              </c-input-group>
+
               <c-input-group class="mb-3">
                 <span cInputGroupText>&#64;</span>
-                <input autoComplete="email" cFormControl placeholder="Email" />
+                <input autoComplete="email" cFormControl placeholder="Email" formControlName="email" />
               </c-input-group>
+
               <c-input-group class="mb-3">
                 <span cInputGroupText>
                   <svg cIcon name="cilLockLocked"></svg>
                 </span>
-                <input autoComplete="new-password" cFormControl placeholder="Password" type="password" />
+                <input autoComplete="new-password" cFormControl placeholder="Password" type="password"
+                  formControlName="password" />
               </c-input-group>
+
               <c-input-group class="mb-4">
                 <span cInputGroupText>
                   <svg cIcon name="cilLockLocked"></svg>
                 </span>
-                <input autoComplete="new-password" cFormControl placeholder="Repeat password" type="password" />
+                <input autoComplete="new-password" cFormControl placeholder="Repeat password" type="password"
+                  formControlName="confirmPassword" />
               </c-input-group>
+
+              <div *ngIf="registerForm.errors?.['passwordsMismatch'] 
+                && registerForm.get('confirmPassword')?.value 
+                && registerForm.get('password')?.value" class="mb-20">
+                <span style="color: red;">Passwords do not match!</span>
+              </div>
+
+
               <div class="d-grid">
-                <button cButton color="success">Create Account</button>
+                <button cButton color="success" type="submit" [disabled]="registerForm.invalid">
+                  Create Account
+                </button>
               </div>
             </form>
           </c-card-body>
