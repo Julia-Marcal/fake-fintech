@@ -23,20 +23,40 @@ import { FormsModule } from '@angular/forms'
     
 })
 export class LoginComponent {
+  isLoading = false;
   email: string = '';
   password: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
+    if(this.isLoading) return
+    this.isLoading = true
+
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Login successful', response);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home']).then(() => {
+          this.isLoading = false; 
+        }).catch(() => {
+          this.isLoading = false; 
+        });
       },
       error: (error) => {
         console.error('Login failed', error);
+        this.isLoading = false; 
       }
+    });
+  }
+
+  onRegister() {
+    if(this.isLoading) return
+    this.isLoading = true
+
+    this.router.navigate(['/register']).then(() => {
+      this.isLoading = false; 
+    }).catch(() => {
+      this.isLoading = false; 
     });
   }
 }
