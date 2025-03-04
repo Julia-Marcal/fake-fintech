@@ -4,22 +4,26 @@ import { IconDirective } from '@coreui/icons-angular';
 import { ContainerComponent, RowComponent, ColComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective } from '@coreui/angular';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../shared/services/auth/auth.service';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-    selector: 'app-register',
-    templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
-    imports: [
-      CommonModule, ReactiveFormsModule, ContainerComponent, RowComponent, 
-      ColComponent, TextColorDirective, CardComponent, CardBodyComponent, 
-      FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, 
-      FormControlDirective, ButtonDirective
-    ]
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
+  imports: [
+    CommonModule, ReactiveFormsModule, ContainerComponent, RowComponent, 
+    ColComponent, TextColorDirective, CardComponent, CardBodyComponent, 
+    FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, 
+    FormControlDirective, ButtonDirective
+  ]
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
-  
-  constructor(private fb: FormBuilder) {}
+  isLoading = false;
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -35,15 +39,26 @@ export class RegisterComponent implements OnInit {
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordsMismatch: true };
+
+    return password && confirmPassword && password !== confirmPassword ? { passwordsMismatch: true } : null;
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
+  
     if (this.registerForm.valid) {
-      const formData = this.registerForm.value;
-      console.log('Form Data:', formData);
-    } else {
-      console.log('Form is invalid');
+      this.isLoading = true;
+      this.authService.register(this.registerForm.value).subscribe(
+        () => {
+          this.isLoading = false;
+          this.router.navigate(['/home']);
+        },
+        (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          console.error('Registration failed', error);
+        }
+      );
     }
   }
+  
 }

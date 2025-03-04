@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError,throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 
-@Injectable({ providedIn: 'root' }) // Add @Injectable() decorator
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
 
@@ -25,6 +25,26 @@ export class AuthService {
         localStorage.setItem('currentUser', JSON.stringify(response));
         this.currentUserSubject.next(response);
         return response;
+      })
+    );
+  }
+
+  register(body: object) {
+    return this.http.post<any>('http://localhost:8080/api/users', body).pipe(
+      map((response) => {
+        const decodedToken = jwtDecode<{ id: string; username: string; role: string; email: string }>(
+          response.access_token
+        );
+  
+        response.user = decodedToken;
+        localStorage.setItem('currentUser', JSON.stringify(response));
+        this.currentUserSubject.next(response);
+  
+        return response;
+      }),
+      catchError((error) => {
+        console.error('Registration error', error);
+        return throwError(error);
       })
     );
   }
