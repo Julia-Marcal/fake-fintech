@@ -47,17 +47,18 @@ export class RegisterComponent implements OnInit {
     if (this.isLoading) return;
   
     if (this.registerForm.valid) {
-      this.isLoading = true;
-      this.authService.register(this.registerForm.value).subscribe(
-        () => {
-          this.isLoading = false;
+      this.isLoading = true; 
+  
+      this.authService.register(this.registerForm.value).subscribe({
+        next: () => {
           this.router.navigate(['/home']);
-        },
-        (error: HttpErrorResponse) => {
           this.isLoading = false;
-          console.error('Registration failed', error);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Registration failed:', error);
+          this.isLoading = false; 
         }
-      );
+      });
     }
   }
   

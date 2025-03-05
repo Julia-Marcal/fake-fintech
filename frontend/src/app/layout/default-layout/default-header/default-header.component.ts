@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../shared/services/auth/auth.service';
+import { AuthService } from '../../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
 import {
   AvatarComponent,

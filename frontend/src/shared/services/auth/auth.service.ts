@@ -54,6 +54,29 @@ export class AuthService {
   }
 
 
+  register(body: object) {
+    return this.http
+      .post<any>(`${this.url}/users`, { body })
+      .pipe(
+        map((response) => {
+          const decodedToken = jwtDecode<{
+            id: string;
+            username: string;
+            role: string;
+            email: string;
+          }>(response.token);
+
+          response.user = decodedToken;
+
+          localStorage.setItem('currentUser', JSON.stringify(response));
+          
+          this.currentUserSubject.next(response);
+
+          return response;
+        })
+    ) ;
+  }
+
   logout(): void {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
