@@ -57,9 +57,12 @@
                 <span style="color: red;">Passwords do not match!</span>
               </div>
 
-
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.value.length < 8" class="mb-20">
+                <span style="color: red;">Your password must be at least 8 characters long.</span>
+              </div>
+              
               <div class="d-grid">
-                <button cButton color="success" type="submit">
+                <button cButton color="success" type="submit" (click)="onSubmit()">
                   Create Account
                 </button>
               </div>

@@ -45,10 +45,12 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     if (this.isLoading) return;
-  
+    
+    console.log(this.registerForm);
     if (this.registerForm.valid) {
       this.isLoading = true; 
   
+
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
           this.router.navigate(['/home']);
@@ -57,6 +59,13 @@ export class RegisterComponent implements OnInit {
         error: (error: HttpErrorResponse) => {
           console.error('Registration failed:', error);
           this.isLoading = false; 
+        }
+      });
+    } else {
+      Object.keys(this.registerForm.controls).forEach((controlName) => {
+        const control = this.registerForm.get(controlName);
+        if (control?.invalid) {
+          console.log(`Invalid field: ${controlName}`, control.errors);
         }
       });
     }
