@@ -43,7 +43,7 @@
                   formControlName="password" />
               </c-input-group>
 
-              <c-input-group class="mb-4">
+              <c-input-group class="mb-3">
                 <span cInputGroupText>
                   <svg cIcon name="cilLockLocked"></svg>
                 </span>
@@ -53,11 +53,11 @@
 
               <div *ngIf="registerForm.errors?.['passwordsMismatch'] 
                 && registerForm.get('confirmPassword')?.value 
-                && registerForm.get('password')?.value" class="mb-20">
+                && registerForm.get('password')?.value" class="mb-2">
                 <span style="color: red;">Passwords do not match!</span>
               </div>
 
-              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.value.length < 8" class="mb-20">
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.value.length < 8" class="mb-3">
                 <span style="color: red;">Your password must be at least 8 characters long.</span>
               </div>
               
