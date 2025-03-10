@@ -22,6 +22,10 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	if user.Role == "" {
+		user.Role = "user"
+	}
+
 	CacheErr := cache.CacheUser(user)
 	if CacheErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
