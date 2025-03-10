@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
-      lastName: ['', Validators.required],
+      last_name: ['', Validators.required],
       age: ['', [Validators.required, Validators.min(18)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -46,13 +46,12 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.isLoading) return;
     
-    console.log(this.registerForm);
     if (this.registerForm.valid) {
       this.isLoading = true; 
   
 
       this.authService.register(this.registerForm.value).subscribe({
-        next: () => {
+        next: (response) => {
           this.router.navigate(['/home']);
           this.isLoading = false;
         },
@@ -69,6 +68,7 @@ export class RegisterComponent implements OnInit {
         }
       });
     }
+
   }
   
 }

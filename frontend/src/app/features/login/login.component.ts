@@ -35,7 +35,6 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
         this.router.navigate(['/home']).then(() => {
           this.isLoading = false; 
         }).catch(() => {
