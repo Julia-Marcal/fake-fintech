@@ -7,11 +7,15 @@ import { delay, filter, map, tap } from 'rxjs/operators';
 import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
+import { AuthService } from '../shared/services/auth/auth.service';
+
 
 @Component({
     selector: 'app-root',
     template: '<router-outlet />',
-    imports: [RouterOutlet]
+    imports: [
+      RouterOutlet,
+    ],
 })
 export class AppComponent implements OnInit {
   title = 'CoreUI Angular Admin Template';
@@ -23,6 +27,7 @@ export class AppComponent implements OnInit {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly #iconSetService = inject(IconSetService);
+  readonly #authService = inject(AuthService);
 
   constructor() {
     this.#titleService.setTitle(this.title);
