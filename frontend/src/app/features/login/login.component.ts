@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { ToastService } from '../../../shared/services/toast/toast.service';
+import { LoaderService } from '../../../shared/services/loader/loader.service';
 import { IconDirective } from '@coreui/icons-angular';
 import {
   ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective,
@@ -28,41 +29,51 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private router: Router, private toastService: ToastService) { }
+  constructor(private authService: AuthService, private router: Router, private toastService: ToastService, private loaderService: LoaderService) { }
 
   onSubmit() {
-    if(this.isLoading) return
-    this.isLoading = true
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
+
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         this.toastService.showToast({
           title: 'Sucesso',
           message: 'Você conseguiu logar!',
-          duration: 3000, 
+          duration: 3000,
           position: 'top-end'
         });
 
         this.router.navigate(['/home']).then(() => {
-          this.isLoading = false; 
+          this.isLoading = false;
+          this.loaderService.setLoading(false);
         }).catch(() => {
-          this.isLoading = false; 
+          this.isLoading = false;
+          this.loaderService.setLoading(false);
         });
       },
       error: (error) => {
         console.error('Login failed', error);
-        this.isLoading = false; 
+        this.isLoading = false;
+        this.loaderService.setLoading(false);
       }
     });
   }
 
   onRegister() {
-    if(this.isLoading) return
-    this.isLoading = true
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
 
     this.router.navigate(['/register']).then(() => {
-      this.isLoading = false; 
+      this.isLoading = false;
+      this.loaderService.setLoading(false);
     }).catch(() => {
-      this.isLoading = false; 
+      this.isLoading = false;
+      this.loaderService.setLoading(false);
     });
   }
 }
