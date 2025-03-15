@@ -1,0 +1,21 @@
+name: Push-CI
+
+on: push
+
+jobs:
+  linter:
+    name: Lint code base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.KEY }}
+          LINTER_RULES_PATH: '.'
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_GO: true
+          FILTER_REGEX_EXCLUDE: (dist|node_modules|go.mod|go.sum)
