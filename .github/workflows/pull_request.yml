@@ -1,0 +1,71 @@
+name: Test pull request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build project
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+        env:
+          GITHUB_TOKEN: ${{ secrets.KEY }}
+
+  test-backend:
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.22
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go environment
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: go mod tidy
+
+      - name: Build project
+        working-directory: ./backend
+        run: go build
+
+      - name: Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+        env:
+          GITHUB_TOKEN: ${{ secrets.KEY }}
