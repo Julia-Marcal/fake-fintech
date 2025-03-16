@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
 
       - name: Set up Go environment
         uses: actions/setup-go@v4
@@ -59,7 +61,7 @@ jobs:
 
       - name: Build project
         working-directory: ./backend
-        run: go build
+        run: go build -buildvcs=false
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@master
@@ -70,7 +72,6 @@ jobs:
           ignore-unfixed: true
           severity: HIGH,CRITICAL
         env:
-          env:
           GITHUB_TOKEN: ${{ secrets.KEY }}
           MY_SALT: ${{ secrets.MY_SALT }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
