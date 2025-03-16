@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	database "github.com/Julia-Marcal/fake-fintech/internal/schemas/user"
 	queries "github.com/Julia-Marcal/fake-fintech/internal/schemas/user/queries"
 )
@@ -15,5 +17,9 @@ func NewDB() {
 		Role:     "admin",
 	}
 
-	queries.Create(user)
+	err := queries.Create(user)
+	if err != nil {
+		fmt.Println("Error creating user:", err)
+	}
+
 }
