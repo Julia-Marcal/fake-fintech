@@ -8,7 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var jwtKey = []byte(os.Getenv("jwtKey"))
+var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 type JWTClaim struct {
 	Id       string `json:"Id"`

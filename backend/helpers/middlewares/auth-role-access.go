@@ -31,7 +31,7 @@ func RoleBasedAccess(requiredRole string) gin.HandlerFunc {
 		claims := &JWTClaim{}
 
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("jwtKey")), nil
+			return []byte(os.Getenv("JWT_KEY")), nil
 		})
 
 		if err != nil || !token.Valid {
