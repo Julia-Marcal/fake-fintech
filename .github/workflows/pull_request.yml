@@ -37,6 +37,8 @@ jobs:
           severity: HIGH,CRITICAL
         env:
           GITHUB_TOKEN: ${{ secrets.KEY }}
+          MY_SALT: ${{ secrets.MY_SALT }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
 
   test-backend:
     runs-on: ubuntu-latest
@@ -68,4 +70,7 @@ jobs:
           ignore-unfixed: true
           severity: HIGH,CRITICAL
         env:
+          env:
           GITHUB_TOKEN: ${{ secrets.KEY }}
+          MY_SALT: ${{ secrets.MY_SALT }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
