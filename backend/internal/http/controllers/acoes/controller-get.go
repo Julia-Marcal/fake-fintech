@@ -1,6 +1,7 @@
 package acoes_controller
 
 import (
+	"fmt"
 	"net/http"
 
 	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func/acoes"
@@ -19,6 +20,9 @@ func GetAcoes(c *gin.Context) {
 	}
 
 	cachedAcoes, cacheErr := cache.GetCachedAcoes(AcaoId)
+	if cacheErr != nil {
+		fmt.Println("Cache retrieval error:", cacheErr)
+	}
 
 	if cachedAcoes.Id != "" {
 		c.JSON(http.StatusOK, gin.H{

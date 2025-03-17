@@ -1,6 +1,7 @@
 package wallet_controller
 
 import (
+	"fmt"
 	"net/http"
 
 	cache "github.com/Julia-Marcal/fake-fintech/internal/cache/caching-func/wallet"
@@ -19,6 +20,9 @@ func GetWallet(c *gin.Context) {
 	}
 
 	cachedWallet, cacheErr := cache.GetCachedWallet(walletId)
+	if cacheErr != nil {
+		fmt.Println("Cache retrieval error:", cacheErr)
+	}
 
 	if cachedWallet.Id != "" {
 		c.JSON(http.StatusOK, gin.H{

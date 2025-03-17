@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"time"
 
 	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
@@ -82,5 +83,8 @@ func StartRouter() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.Run()
+	err := router.Run()
+	if err != nil {
+		fmt.Println("Error while running router:", err)
+	}
 }
