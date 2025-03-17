@@ -42,9 +42,11 @@ func GetDatabase() string {
 }
 
 func SetSalt() []byte {
+	loadEnv()
 	return []byte(os.Getenv("MY_SALT"))
 }
 
 func GetJwtKey() string {
+	loadEnv()
 	return os.Getenv("JWT_KEY")
 }
