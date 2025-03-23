@@ -11,6 +11,8 @@ import { ConfigService } from '../config/config.service';
 export class AuthService {
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
+  private isAuthenticatedSubject: BehaviorSubject<boolean>;
+  public isAuthenticated: Observable<boolean>;
 
   private readonly url: string;
   private readonly token: string;
@@ -22,6 +24,11 @@ export class AuthService {
     );
     this.currentUser = this.currentUserSubject.asObservable();
 
+    this.isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+    this.isAuthenticated = this.isAuthenticatedSubject.asObservable();
+
+    this.checkTokenValidity();
+
     this.url = this.configService.apiBaseUrl;
     this.token = this.configService.apiToken;
   }
@@ -30,50 +37,76 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  login(email: string, password: string): Observable<any> {
-    return this.http
-      .post<any>(`${this.url}/login`, { email, password })
-      .pipe(
-        map((response) => {
-          this.setToken(response)
-
-          return response;
-        })
-      );
+  public get isAuthenticatedValue(): boolean {
+    return this.isAuthenticatedSubject.value;
   }
 
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.url}/login`, { email, password }).pipe(
+      map((response) => {
+        this.setToken(response);
+        this.isAuthenticatedSubject.next(true);
+        return response;
+      })
+    );
+  }
 
-  register(body: object) {
-    return this.http
-      .post<any>(`${this.url}/users`, { ...body })
-      .pipe(
-        map((response) => {
-          return response;
-        })
-    ) ;
+  register(body: object): Observable<any> {
+    return this.http.post<any>(`${this.url}/users`, { ...body }).pipe(
+      map((response) => {
+        console.log(response);
+        return response;
+      })
+    );
   }
 
   setToken(response: any): void {
     const decodedToken = jwtDecode<{
       id: string;
       username: string;
+      exp: number;
       role: string;
       email: string;
     }>(response.token);
-  
-    response.user = decodedToken;
-  
-    localStorage.setItem('currentUser', JSON.stringify(response));
+
+    if (decodedToken.exp * 1000 < Date.now()) {
+      this.logout();
+      throw new Error('Token has expired');
+    }
+
+    localStorage.setItem('currentUser', JSON.stringify(response.token));
     this.currentUserSubject.next(response);
+    this.isAuthenticatedSubject.next(true);
   }
 
   logout(): void {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
   }
 
   getToken(): string | null {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    return currentUser?.access_token || null;
+    return currentUser || null;
+  }
+
+  private checkTokenValidity(): void {
+    const token = this.getToken();
+    
+    if (!token) {
+      this.isAuthenticatedSubject.next(false);
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode<{ exp: number }>(token);
+      if (decodedToken.exp * 1000 < Date.now()) {
+        this.logout();
+      } else {
+        this.isAuthenticatedSubject.next(true);
+      }
+    } catch (error) {
+      this.logout();
+    }
   }
 }
