@@ -21,5 +21,5 @@ func main() {
 	}
 
 	services.NewDB()
-	router.StartRouter()
+	router.RunServer()
 }

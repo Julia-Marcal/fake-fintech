@@ -24,7 +24,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-func StartRouter() {
+func StartRouter() *gin.Engine {
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
@@ -44,6 +44,9 @@ func StartRouter() {
 		api.POST("/login", rateLimiter, users.GenerateToken)
 		api.GET("/metrics", rateLimiter, middlewares.PrometheusHandler())
 		api.POST("/users", rateLimiter, users.CreateUser)
+		api.GET("/ping", func(c *gin.Context) {
+			c.String(200, "pong")
+		})
 
 		authorized := api.Group("/v1")
 		authorized.Use(middlewares.Auth())
@@ -83,6 +86,11 @@ func StartRouter() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	return router
+}
+
+func RunServer() {
+	router := StartRouter()
 	err := router.Run()
 	if err != nil {
 		fmt.Println("Error while running router:", err)
