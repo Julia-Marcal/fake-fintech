@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test-frontend:
+  frontend:
     runs-on: ubuntu-latest
     container:
       image: node:20
@@ -40,7 +40,7 @@ jobs:
           MY_SALT: ${{ secrets.MY_SALT }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
 
-  test-backend:
+  backend:
     runs-on: ubuntu-latest
     container:
       image: golang:1.22
@@ -75,3 +75,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.KEY }}
           MY_SALT: ${{ secrets.MY_SALT }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
+
+  test-backend-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.22
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
+
+      - name: Set up Go environment
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: go mod tidy
+
+      - name: Run Tests
+        working-directory: ./backend/tests
+        run: go test -v ./...
