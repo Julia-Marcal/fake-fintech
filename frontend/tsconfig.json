@@ -22,6 +22,16 @@
     "lib": [
       "ES2022",
       "dom"
+    ],
+    "types": [
+      [
+        "jest",
+        "node"
+      ]
+    ],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.spec.ts"
     ]
   },
   "angularCompilerOptions": {
@@ -32,7 +42,11 @@
   },
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.spec.json" },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
   ]
 }
