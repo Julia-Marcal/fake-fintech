@@ -18,3 +18,18 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_TYPESCRIPT_ES: true
           FILTER_REGEX_EXCLUDE: (dist|node_modules|backend)
+
+  build:
+      name: Build and analyze
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+
+        - name: Run SonarQube Analysis
+          uses: SonarSource/sonarqube-scan-action@v4
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

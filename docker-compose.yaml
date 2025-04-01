@@ -64,6 +64,24 @@ services:
     networks:
       - app-network
 
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgres:5432/sonarqube
+      - SONARQUBE_JDBC_USERNAME=postgres
+      - SONARQUBE_JDBC_PASSWORD=your_password
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
 networks:
   app-network:
     driver: bridge
@@ -73,3 +91,9 @@ volumes:
     name: fake-fintech_postgres_data
   redis_data:
     name: fake-fintech_redis_data
+  sonarqube_data:
+    name: sonarqube_data
+  sonarqube_extensions:
+    name: sonarqube_extensions
+  sonarqube_logs:
+    name: sonarqube_logs
