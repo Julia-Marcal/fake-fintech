@@ -110,6 +110,18 @@ The frontend is built using **Angular 19** and based on the **CoreUI** template,
 
    - The app will be accessible at `http://localhost:4200`.
 
+### Setting Up SonarQube
+
+1. **Run SonarQube On Docker**  
+   Follow the official SonarQube guide to set it up on the code locally.
+
+2. **Install Required Extensions**  
+   - Navigate to **Administration > Marketplace** within the SonarQube dashboard.  
+   - Search for and install the **Dependency-Check** extension.
+
+3. **Access SonarQube**  
+   - Once running, the application will be available at [`http://localhost:9000`](http://localhost:9000).
+
 ## Future Development
 
 In the future, this project will integrate with third-party fintech APIs to retrieve real-time financial data and expand its functionality with advanced features like:
