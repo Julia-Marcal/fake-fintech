@@ -34,6 +34,6 @@ func GetWalletAcoes(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Wallet with investment allocation was returned successfully",
-		"acoes":    walletAcoes,
+		"acoes":   walletAcoes,
 	})
 }

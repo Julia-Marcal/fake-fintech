@@ -6,10 +6,13 @@ import (
 	_ "github.com/gin-gonic/gin"
 )
 
-func Create(acao *database.Acoes) error {
+func Create(acao *database.Acoes) (*database.Acoes, error) {
 	db := repository.NewPostgres()
 	result := db.Create(acao)
-	return result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return acao, nil
 }
 
 func FindAcao(id_acao string) (*database.Acoes, error) {

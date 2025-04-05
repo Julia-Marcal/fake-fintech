@@ -5,10 +5,11 @@ import (
 	"time"
 
 	middlewares "github.com/Julia-Marcal/fake-fintech/helpers/middlewares"
-	acoes "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/acoes"
-	users "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/users"
-	wallet "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/wallet"
-	wallet_acoes "github.com/Julia-Marcal/fake-fintech/internal/http/controllers/wallet_acoes"
+	acoes "github.com/Julia-Marcal/fake-fintech/internal/controllers/acoes"
+	auth "github.com/Julia-Marcal/fake-fintech/internal/controllers/auth"
+	users "github.com/Julia-Marcal/fake-fintech/internal/controllers/users"
+	wallet "github.com/Julia-Marcal/fake-fintech/internal/controllers/wallet"
+	wallet_acoes "github.com/Julia-Marcal/fake-fintech/internal/controllers/wallet_acoes"
 
 	"github.com/gin-gonic/gin"
 
@@ -41,7 +42,7 @@ func StartRouter() {
 
 	api := router.Group("/api")
 	{
-		api.POST("/login", rateLimiter, users.GenerateToken)
+		api.POST("/login", rateLimiter, auth.GenerateToken)
 		api.GET("/metrics", rateLimiter, middlewares.PrometheusHandler())
 		api.POST("/users", rateLimiter, users.CreateUser)
 
