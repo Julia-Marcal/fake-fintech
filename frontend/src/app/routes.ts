@@ -21,5 +21,12 @@ export const routes: Routes = [
     data: {
       title: 'Register Page'
     }
+  },
+  {
+    path: 'user',
+    loadComponent: () => import('./features/user/user.component').then(m => m.UserComponent),
+    data: {
+      title: 'User Page'
+    }
   }
 ];

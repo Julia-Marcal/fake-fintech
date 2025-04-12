@@ -2,27 +2,21 @@ import { Routes } from '@angular/router';
 import { DefaultLayoutComponent } from './layout';
 
 export const routes: Routes = [
-  // children: [
-  //   {
-  //     path: 'theme',
-  //     loadChildren: () => import('../shared/base/theme/routes').then((m) => m.routes)
-  //   },
-  //   {
-  //     path: 'base',
-  //     loadChildren: () => import('../shared/base/routes').then((m) => m.routes)
-  //   },
-  //   {
-  //     path: 'pages',
-  //     loadChildren: () => import('./routes').then((m) => m.routes)
-  //   }
-  // ]
-
   {
-    path: 'home',
+    path: '',
     component: DefaultLayoutComponent,
     data: {
       title: 'Home'
-    }
+    },
+    children: [
+      {
+        path: 'user',
+        loadComponent: () => import('./features/user/user.component').then(m => m.UserComponent),
+        data: {
+          title: 'User Profile'
+        }
+      },
+    ]
   },
   {
     path: '404',
