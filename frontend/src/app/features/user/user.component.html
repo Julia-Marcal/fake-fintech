@@ -7,8 +7,14 @@
             <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-6">
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-200">Username</label>
-                    <input formControlName="username" type="text"
+                    <label class="block mb-1 text-sm font-medium text-gray-200">Name</label>
+                    <input formControlName="name" type="text"
+                        class="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500 bg-gray-700 text-white placeholder-gray-400">
+                </div>
+
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-200">Last Name</label>
+                    <input formControlName="lastName" type="text"
                         class="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500 bg-gray-700 text-white placeholder-gray-400">
                 </div>
 
@@ -19,10 +25,9 @@
                 </div>
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-200">Bio</label>
-                    <textarea formControlName="bio" rows="3"
-                        class="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500 bg-gray-700 text-white placeholder-gray-400"
-                        placeholder="I own a computer."></textarea>
+                    <label class="block mb-1 text-sm font-medium text-gray-200">Age</label>
+                    <input formControlName="age" type="number"
+                        class="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500 bg-gray-700 text-white placeholder-gray-400">
                 </div>
 
                 <div>

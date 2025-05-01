@@ -1,21 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ConfigService } from '../../../shared/services/config/config.service';
 
 export interface User {
-  id?: number;
-  username: string;
-  email: string;
-  bio?: string;
-  urls?: {
-    website?: string;
-    twitter?: string;
-  };
+  Id: string;
+  Name: string;
+  LastName: string;
+  Email: string;
+  Age: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+interface ApiResponse {
+  message: string;
+  user: User;
 }
 
 @Injectable({
-  providedIn: 'root' 
+  providedIn: 'root'
 })
 export class UserService {
 
@@ -32,11 +37,16 @@ export class UserService {
    * Replace with actual implementation, e.g., fetching based on logged-in user ID.
    */
   getCurrentUser(id: string): Observable<User> {
-    return this.http.get<User>(`${this.url}/v1/users/${id}`, {
+    return this.http.get<ApiResponse>(`${this.url}/v1/user/${id}`, {
       headers: {
-      Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${this.token}`
       }
-    });
+    }).pipe(
+      map((response: ApiResponse) => {
+        console.log(response);
+        return response.user;
+      })
+    );
   }
 
 }

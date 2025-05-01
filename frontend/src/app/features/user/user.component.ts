@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, RowComponent } from '@coreui/angular';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UserService, User } from './user.service';
 
+import { AuthService } from '../../../shared/services/auth/auth.service';
 
 @Component({
   selector: 'app-user',
-  standalone: true, 
+  standalone: true,
   imports: [
     TextColorDirective,
     CardComponent,
@@ -17,25 +19,46 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
-export class UserComponent {
+export class UserComponent implements OnInit {
   userForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private authService: AuthService
+  ) {
     this.userForm = this.fb.group({
-      username: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      bio: [''],
+      age: ['', [Validators.pattern('^[0-9]*$')]]
+    });
+  }
 
-      urls: this.fb.group({
-        website: [''],
-        twitter: ['']
-      })
+  ngOnInit(): void {
+    const user = this.authService.getDecodedToken();
+
+    this.userService.getCurrentUser(user.Id).subscribe({
+      next: (user: User) => {
+        console.log(user);
+
+
+        this.userForm.setValue({
+          name: user.Name || '',
+          lastName: user.LastName || '',
+          email: user.Email || '',
+          age: user.Age || ''
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching user data:', err);
+      }
     });
   }
 
   onSubmit(): void {
     if (this.userForm.valid) {
-      console.log(this.userForm.value);
+      console.log('Form Submitted!', this.userForm.value);
     }
   }
 }

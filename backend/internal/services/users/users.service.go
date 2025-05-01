@@ -1,6 +1,7 @@
 package user_service
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -61,6 +62,7 @@ func GetUser(c *gin.Context) ServiceResponse {
 	}
 
 	user, err := queries.FindUserById(userId)
+	fmt.Printf("User ID: %s\n", userId)
 	if err != nil {
 		return ServiceResponse{http.StatusInternalServerError, gin.H{"error": err.Error()}}
 	}
@@ -73,7 +75,15 @@ func GetUser(c *gin.Context) ServiceResponse {
 		return ServiceResponse{http.StatusInternalServerError, gin.H{"error": "Failed to cache user"}}
 	}
 
-	return ServiceResponse{http.StatusOK, gin.H{"message": "User returned successfully", "user": user}}
+	filteredUser := gin.H{
+		"name":       user.Name,
+		"lastname":   user.LastName,
+		"age":        user.Age,
+		"email":      user.Email,
+		"created_at": user.CreatedAt,
+		"updated_at": user.UpdatedAt,
+	}
+	return ServiceResponse{http.StatusOK, gin.H{"message": "User returned successfully", "user": filteredUser}}
 }
 
 func GetAllUsers(c *gin.Context) ServiceResponse {

@@ -54,7 +54,6 @@ export class AuthService {
   register(body: object): Observable<any> {
     return this.http.post<any>(`${this.url}/users`, { ...body }).pipe(
       map((response) => {
-        console.log(response);
         return response;
       })
     );
@@ -92,7 +91,7 @@ export class AuthService {
 
   private checkTokenValidity(): void {
     const token = this.getToken();
-    
+
     if (!token) {
       this.isAuthenticatedSubject.next(false);
       return;
@@ -109,4 +108,22 @@ export class AuthService {
       this.logout();
     }
   }
+
+  public getDecodedToken(): any {
+    const token = this.getToken();
+
+    if (!token)
+      return null;
+
+    const decodedToken = jwtDecode<{
+      id: string;
+      username: string;
+      exp: number;
+      role: string;
+      email: string;
+    }>(token);
+
+    return decodedToken
+  }
+
 }
