@@ -15,30 +15,17 @@ export const navItems: INavData[] = [
   //   name: 'Extras'
   // },
   {
-    name: 'Pages',
-    url: '/login',
-    iconComponent: { name: 'cil-star' },
+    name: 'Finance',
+    url: '/finance',
+    iconComponent: { name: 'cil-dollar' },
     children: [
       {
-        name: 'Login',
-        url: '/login',
+        name: 'Wallet',
+        url: '/wallet',
         icon: 'nav-icon-bullet'
       },
-      {
-        name: 'Register',
-        url: '/register',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Error 404',
-        url: '/404',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Error 500',
-        url: '/500',
-        icon: 'nav-icon-bullet'
-      }
+
+
     ]
   },
 
