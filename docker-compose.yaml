@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -9,91 +7,66 @@ services:
       - ./frontend:/app/frontend
     ports:
       - "80:80"
+      
+  mysql:
+    image: mysql:8.0
+    container_name: fake-fintech_mysql
     restart: unless-stopped
-
-  postgres:
-    image: postgres:16
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-fake-fintech}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: your_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_password
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-3333}:3306"
     networks:
-      - app-network
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: your@email.com
-      PGADMIN_DEFAULT_PASSWORD: your_password
-    ports:
-      - "4000:80"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
+      - laravel-network
 
   redis:
-    image: redis:latest
+    image: redis:alpine
+    container_name: fake-fintech_redis
+    restart: unless-stopped
     ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+      - "6666:6379"
     networks:
-      - app-network
+      - laravel-network
 
-  backend:
+  app:
     build:
-      context: ./backend
+      context: ./backend/
       dockerfile: Dockerfile
+    container_name: fake-fintech_app
+    restart: unless-stopped
+    working_dir: /var/www
     volumes:
-      - ./backend:/app/backend
-    ports:
-      - "8080:8080"
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres 
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DATABASE: your_db
-    depends_on:
-      - postgres
+      - .:/var/www
     networks:
-      - app-network
+      - laravel-network
+    depends_on:
+      - mysql
+      - redis
 
-  sonarqube:
-    image: sonarqube:latest
-    container_name: sonarqube
-    environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgres:5432/sonarqube
-      - SONARQUBE_JDBC_USERNAME=postgres
-      - SONARQUBE_JDBC_PASSWORD=your_password
+  webserver:
+    image: nginx:alpine
+    container_name: fake-fintech_webserver
+    restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "${APP_PORT:-8888}:80"
     volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
+      - .:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
-      - app-network
+      - laravel-network
     depends_on:
-      - postgres
-
-networks:
-  app-network:
-    driver: bridge
+      - app
 
 volumes:
-  postgres_data:
-    name: fake-fintech_postgres_data
-  redis_data:
-    name: fake-fintech_redis_data
-  sonarqube_data:
-    name: sonarqube_data
-  sonarqube_extensions:
-    name: sonarqube_extensions
-  sonarqube_logs:
-    name: sonarqube_logs
+  mysql_data:
+    driver: local
+
+networks:
+  laravel-network:
+    driver: bridge
