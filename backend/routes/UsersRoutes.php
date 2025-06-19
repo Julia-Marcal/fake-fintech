@@ -15,5 +15,8 @@ Route::prefix('users')->middleware('throttle:api')->group(function () {
         Route::delete('/{id}', function (string $id, UsersService $userService) {
             return $userService->deleteUser($id);
         });
+        Route::get('/{id}/wallets', function (string $id, UsersService $userService) {
+            return $userService->getUserWallets($id);
+        });
     });
 });

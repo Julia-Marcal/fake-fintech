@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\WalletResource;
 
 class UsersController extends Controller
 {
@@ -56,7 +58,7 @@ class UsersController extends Controller
         
         return response()->json([
             'user_id' => $id,
-            'wallets' => $wallets,
+            'wallets' => WalletResource::collection($wallets),
         ]);
     }
 }

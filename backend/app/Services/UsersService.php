@@ -37,11 +37,15 @@ class UsersService
         return $userResource;
     }
 
-    public function getUserWallets($id)
+    public function getUserWallets($id): JsonResponse
     {
         $userWallets = $this->controller->getUserWallets($id);
 
-        return $userWallets;
+        if($userWallets->isEmpty()) {
+            return response()->json(['msg' => 'User not found or has no wallets', 'error' => true], 404);
+        }
+
+        return response()->json($userWallets->original);
     }
 
     public function deleteUser(string $id): JsonResponse
