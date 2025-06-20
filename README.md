@@ -8,7 +8,7 @@ The **Fake Fintech** project is an initiative aimed at understanding how fintech
 
 This project is structured with the following technologies:
 
-- **Backend**: Built in **Golang** using the **Gin** framework.
+- **Backend**: Built in **PHP** using the **Laravel** framework.
 - **Frontend**: The frontend is based on the **CoreUI** Angular 19 template, providing a responsive and modular UI for interacting with the backend.
 - **Database**: **PostgreSQL** is used to store and manage financial data.
 - **Cache**: Using **Redis**.
@@ -17,72 +17,60 @@ This project is structured with the following technologies:
 
 ### Environment Configuration
 
-To ensure the proper setup of your environment, the `backend/config/env/env.go` file contains the configuration for connecting to PostgreSQL. Make sure your environment variables are set correctly.
+To ensure the proper setup of your environment, the `backend/env` file contains the configuration for connecting to PostgreSQL. Make sure your environment variables are set correctly.
 
-Example of `env.go` file:
+Example of `.env` file:
 
-```go
-package env
+```php
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3333
+DB_DATABASE=fake-fintech
+DB_USERNAME=root
+DB_PASSWORD=secret
 
-import (
-	"fmt"
-	"os"
-)
+CACHE_DRIVER=redis
 
-func setEnv() {
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	database := os.Getenv("POSTGRES_DATABASE")
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6333
+REDIS_DB=0
+REDIS_CACHE_DB=1
+REDIS_CACHE_CONNECTION=cache
 
-	if host == "" || port == "" || user == "" || password == "" || database == "" {
-		panic("Missing required environment variables for PostgreSQL connection")
-	}
+SESSION_DRIVER=redis
+SESSION_LIFETIME=120
 
-	os.Setenv("POSTGRES_HOST", host)
-	os.Setenv("POSTGRES_PORT", port)
-	os.Setenv("POSTGRES_USER", user)
-	os.Setenv("POSTGRES_PASSWORD", password)
-	os.Setenv("POSTGRES_DATABASE", database)
-}
+APP_KEY=base64:your-app-key
+JWT_SECRET=your-jwt-secret
 
-func GetPostgresConnectionString() string {
-	setEnv()
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	database := os.Getenv("POSTGRES_DATABASE")
-
-	connectionStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, database)
-	return connectionStr
-}
-
-func GetDatabase() string {
-	setEnv()
-	return os.Getenv("POSTGRES_DATABASE")
-}
-
-func SetSalt() []byte {
-	your_salt := "MySalt"
-	return []byte(your_salt)
-}
 ```
 
 ### Setting Up the Backend
 
 1. **Install dependencies**:
-   - Install [Go](https://golang.org/dl/) (Golang 1.18+ recommended).
-   - Run the Docker Compose file to set up the backend environment.
+   - Install PHP 8.2+
+   - Install composer.
+   - Run the Docker Compose file to set up MySQL, Redis, and the Laravel environment.
 
 2. **Run the backend**:
-   - Ensure that the `POSTGRES_*` environment variables are correctly set (as shown in the `env.go` file).
-   - Start the backend service:
-     ```bash
-     go run main.go
-     ```
+  - Copy the example environment file and configure it:
 
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+- Run the migrations:
+```bash
+php artisan migrate
+```
+- Start the Laravel development server:
+
+``` bash
+php artisan serve
+```
 ## Frontend Setup
 
 The frontend is built using **Angular 19** and based on the **CoreUI** template, offering a user-friendly interface to interact with the backend.
