@@ -2,6 +2,7 @@
 
 require __DIR__ . '/UsersRoutes.php';
 require __DIR__ . '/AuthRoutes.php';
+require __DIR__ . '/WalletsRoutes.php';
 
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
