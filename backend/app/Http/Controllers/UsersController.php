@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\WalletResource;
+use App\Http\Resources\WalletsResource;
 
 class UsersController extends Controller
 {
@@ -51,14 +51,14 @@ class UsersController extends Controller
     public function getUserWallets($id)
     {
         $wallets = Wallet::where('user_id', $id)->get();
-        
+
         if ($wallets->isEmpty()) {
             return response()->json(['msg' => 'User not found or has no wallets', 'error' => true], 404);
         }
-        
+
         return response()->json([
             'user_id' => $id,
-            'wallets' => WalletResource::collection($wallets),
+            'wallets' => WalletsResource::collection($wallets),
         ]);
     }
 }
