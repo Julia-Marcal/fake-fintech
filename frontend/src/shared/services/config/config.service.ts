@@ -4,10 +4,10 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ConfigService {
-  constructor() {}
+  constructor() { }
 
   get apiBaseUrl(): string {
-    return 'http://localhost:8080/api';
+    return 'http://localhost:8000/api';
   }
 
   get apiToken(): string {
