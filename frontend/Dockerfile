@@ -1,5 +1,5 @@
-# Use Node.js 20.11.1 as the base image for building the Angular app
-FROM node:20.11.1
+# Use Node.js 22.12.0 as the base image for building the Angular app
+FROM node:22.12.0
 
 # Install Angular CLI globally (use the version specified in the project)
 RUN npm install -g @angular/cli@latest
