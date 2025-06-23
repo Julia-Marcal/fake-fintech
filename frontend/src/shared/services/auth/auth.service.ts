@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.url}/login`, { email, password }).pipe(
+    return this.http.post<any>(`${this.url}/auth/login`, { email, password }).pipe(
       map((response) => {
         this.setToken(response);
         this.isAuthenticatedSubject.next(true);
@@ -52,7 +52,7 @@ export class AuthService {
   }
 
   register(body: object): Observable<any> {
-    return this.http.post<any>(`${this.url}/users`, { ...body }).pipe(
+    return this.http.post<any>(`${this.url}/auth/register`, { ...body }).pipe(
       map((response) => {
         return response;
       })

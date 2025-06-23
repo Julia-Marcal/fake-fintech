@@ -7,7 +7,7 @@ export class ConfigService {
   constructor() { }
 
   get apiBaseUrl(): string {
-    return 'http://localhost:8080/api';
+    return 'http://localhost:8000/api';
   }
 
   get apiToken(): string {
