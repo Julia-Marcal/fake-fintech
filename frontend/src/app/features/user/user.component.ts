@@ -38,10 +38,8 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getDecodedToken();
 
-    this.userService.getCurrentUser(user.Id).subscribe({
+    this.userService.getCurrentUser(user.sub).subscribe({
       next: (user: User) => {
-        console.log(user);
-
 
         this.userForm.setValue({
           name: user.Name || '',

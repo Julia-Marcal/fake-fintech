@@ -37,7 +37,7 @@ export class UserService {
    * Replace with actual implementation, e.g., fetching based on logged-in user ID.
    */
   getCurrentUser(id: string): Observable<User> {
-    return this.http.get<ApiResponse>(`${this.url}/v1/user/${id}`, {
+    return this.http.get<ApiResponse>(`${this.url}/users/${id}`, {
       headers: {
         Authorization: `Bearer ${this.token}`
       }
