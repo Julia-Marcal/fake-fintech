@@ -61,11 +61,9 @@ export class AuthService {
 
   setToken(response: any): void {
     const decodedToken = jwtDecode<{
-      id: string;
-      username: string;
+      sub: string;
       exp: number;
       role: string;
-      email: string;
     }>(response.token);
 
     if (decodedToken.exp * 1000 < Date.now()) {
