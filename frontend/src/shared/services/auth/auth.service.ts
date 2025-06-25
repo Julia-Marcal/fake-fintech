@@ -110,7 +110,7 @@ export class AuthService {
   public getDecodedToken(): any {
     const token = this.getToken();
 
-    if (!token)
+    if (!token || Object.keys(token).length == 0)
       return null;
 
     const decodedToken = jwtDecode<{

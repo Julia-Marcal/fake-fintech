@@ -6,17 +6,14 @@ import { ConfigService } from '../../../shared/services/config/config.service';
 
 export interface User {
   Id: string;
-  Name: string;
-  LastName: string;
-  Email: string;
-  Age: number;
-  CreatedAt: string;
-  UpdatedAt: string;
+  name: string;
+  last_name: string;
+  email: string;
+  age: number;
 }
 
 interface ApiResponse {
-  message: string;
-  user: User;
+  data: User;
 }
 
 @Injectable({
@@ -43,8 +40,7 @@ export class UserService {
       }
     }).pipe(
       map((response: ApiResponse) => {
-        console.log(response);
-        return response.user;
+        return response.data;
       })
     );
   }

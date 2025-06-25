@@ -40,12 +40,11 @@ export class UserComponent implements OnInit {
 
     this.userService.getCurrentUser(user.sub).subscribe({
       next: (user: User) => {
-
         this.userForm.setValue({
-          name: user.Name || '',
-          lastName: user.LastName || '',
-          email: user.Email || '',
-          age: user.Age || ''
+          name: user.name || '',
+          lastName: user.last_name || '',
+          email: user.email || '',
+          age: user.age || ''
         });
       },
       error: (err) => {
