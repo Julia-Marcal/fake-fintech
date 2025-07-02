@@ -57,13 +57,13 @@ class UsersService
 
     public function updateUser(string $id, Request $request): JsonResponse
     {
-        $user = $this->controller->updateUser($id, $request->all());
+        $user = $this->controller->updateUser(id: $id, data: $request->all());
 
         if(!$user) {
-            return response()->json(['msg' => 'User not found', 'error' => true], 404);
+            return response()->json(data: ['msg' => 'User not found', 'error' => true], status: 404);
         }
 
-        return response()->json($user);
+        return response()->json(data: $user);
     }
 
 }

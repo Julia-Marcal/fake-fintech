@@ -64,15 +64,18 @@ class UsersController extends Controller
 
     public function updateUser($id, $data)
     {
-        $user = User::find($id);
+        $user = User::find(id: $id);
 
         if (!$user) {
-            return response()->json(['msg' => 'User not found', 'error' => true], 404);
+            return response()->json(data: ['msg' => 'User not found', 'error' => true], status: 404);
         }
 
-        $user->update($data);
+        $user->update(attributes: $data);
         $user->refresh();
 
-        return new UserResource($user);
+        if ($user)
+            Redis::set('user:' . $id, json_encode(value: $user));
+
+        return new UserResource(resource: $user);
     }
 }
