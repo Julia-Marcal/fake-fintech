@@ -34,7 +34,7 @@ export class UserComponent implements OnInit {
   ) {
     this.userForm = this.fb.group({
       name: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       age: ['', [Validators.pattern('^[0-9]*$')]]
     });
@@ -63,7 +63,7 @@ export class UserComponent implements OnInit {
       next: (user: User) => {
         this.userForm.setValue({
           name: user.name || '',
-          lastName: user.last_name || '',
+          last_name: user.last_name || '',
           email: user.email || '',
           age: user.age || ''
         });
@@ -78,13 +78,6 @@ export class UserComponent implements OnInit {
     if (this.userForm.valid) {
       this.userService.updateUser(this.user.sub, this.userForm.value).subscribe({
         next: (user: User) => {
-          this.userForm.setValue({
-            name: user.name || '',
-            lastName: user.last_name || '',
-            email: user.email || '',
-            age: user.age || ''
-          });
-
           this.toastService.showToast({
             title: 'Success',
             message: 'User updated successfully',
