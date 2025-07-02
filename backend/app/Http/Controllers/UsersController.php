@@ -61,4 +61,18 @@ class UsersController extends Controller
             'wallets' => WalletsResource::collection($wallets),
         ]);
     }
+
+    public function updateUser($id, $data)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['msg' => 'User not found', 'error' => true], 404);
+        }
+
+        $user->update($data);
+        $user->refresh();
+
+        return new UserResource($user);
+    }
 }

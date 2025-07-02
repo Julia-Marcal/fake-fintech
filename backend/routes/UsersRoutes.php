@@ -18,5 +18,8 @@ Route::prefix('users')->middleware('throttle:api')->group(function () {
         Route::get('/{id}/wallets', function (string $id, UsersService $userService) {
             return $userService->getUserWallets($id);
         });
+        Route::put('/{id}', function (string $id, Request $request, UsersService $userService) {
+            return $userService->updateUser($id, $request);
+        });
     });
 });
