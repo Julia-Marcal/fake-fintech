@@ -116,11 +116,9 @@ export class AuthService {
     }
 
     const decodedToken = jwtDecode<{
-      id: string;
-      username: string;
+      sub: string;
       exp: number;
       role: string;
-      email: string;
     }>(token);
 
     return decodedToken
