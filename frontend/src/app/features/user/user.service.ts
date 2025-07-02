@@ -45,4 +45,16 @@ export class UserService {
     );
   }
 
+  updateUser(id: string, form: any): Observable<User> {
+    return this.http.put<ApiResponse>(`${this.url}/users/${id}`, form, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    }).pipe(
+      map((response: ApiResponse) => {
+        return response.data;
+      })
+    );
+  }
+
 }

@@ -22,6 +22,8 @@ import { ToastService } from '../../../shared/services/toast/toast.service';
 })
 export class UserComponent implements OnInit {
   userForm: FormGroup;
+  user: any = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,15 +41,15 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.authService.getDecodedToken();
+    this.user = this.authService.getDecodedToken();
 
-    if (!user || !user.sub) {
+    if (!this.user || !this.user.sub) {
       this.toastService.showToast({
           title: 'Erro',
           message: 'Erro ao obter os dados do usuário. Você não está logado.',
           duration: 3000,
           position: 'top-end'
-        }); 
+        });
 
 
       setTimeout(() => {
@@ -57,8 +59,8 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    this.userService.getCurrentUser(user.sub).subscribe({
-      next: (user: User) => {        
+    this.userService.getCurrentUser(this.user.sub).subscribe({
+      next: (user: User) => {
         this.userForm.setValue({
           name: user.name || '',
           lastName: user.last_name || '',
@@ -74,7 +76,32 @@ export class UserComponent implements OnInit {
 
   onSubmit(): void {
     if (this.userForm.valid) {
-      console.log('Form Submitted!', this.userForm.value);
+      this.userService.updateUser(this.user.sub, this.userForm.value).subscribe({
+        next: (user: User) => {
+          this.userForm.setValue({
+            name: user.name || '',
+            lastName: user.last_name || '',
+            email: user.email || '',
+            age: user.age || ''
+          });
+
+          this.toastService.showToast({
+            title: 'Success',
+            message: 'User updated successfully',
+            duration: 3000,
+            position: 'top-end'
+          });
+        },
+        error: (err) => {
+          console.error('Error updating user data:', err);
+          this.toastService.showToast({
+            title: 'Error',
+            message: 'Failed to update user',
+            duration: 3000,
+            position: 'top-end'
+          });
+        }
+      });
     }
   }
 }
