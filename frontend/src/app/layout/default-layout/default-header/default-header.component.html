@@ -1,4 +1,3 @@
-<!--<c-header class="mb-4 d-print-none" position="sticky">-->
 <ng-container>
   <c-container [fluid]="true" class="border-bottom px-4">
     <button
@@ -13,13 +12,14 @@
     </button>
 
 
-    <c-header-nav class="d-none d-md-flex ms-auto ">
-      <a cNavLink>
-        <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
-      </a>
-    </c-header-nav>
-
     <c-header-nav class="mx-0">
+      <div class="nav-item py-1">
+        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+      </div>
+      <ng-container *ngTemplateOutlet="themeDropdown" />
+      <div class="nav-item py-1">
+        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+      </div>
       <ng-container *ngTemplateOutlet="userDropdown" />
     </c-header-nav>
 
@@ -85,4 +85,3 @@
     </ul>
   </c-dropdown>
 </ng-template>
-
