@@ -20,7 +20,7 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-dollar' },
     children: [
       {
-        name: 'Wallet',
+        name: 'Wallets',
         url: '/wallet',
         icon: 'nav-icon-bullet'
       },

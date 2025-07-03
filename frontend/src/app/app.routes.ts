@@ -20,7 +20,7 @@ export const routes: Routes = [
         path: 'wallet',
         loadComponent: () => import('./features/wallet/wallet.component').then(m => m.WalletComponent),
         data: {
-          title: 'Register Page'
+          title: 'Wallets'
         }
       },
     ]
