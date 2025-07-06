@@ -30,6 +30,22 @@
 </ng-container>
 <!--</c-header>-->
 
+<ng-template #themeDropdown>
+  <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
+    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open theme menu">
+      <svg cIcon [name]="icons()" size="lg"></svg>
+    </button>
+    <ul cDropdownMenu class="pt-0 w-auto">
+      <li *ngFor="let mode of colorModes">
+        <a cDropdownItem (click)="colorModeService.colorMode.set(mode.name)">
+          <svg cIcon class="me-2" [name]="mode.icon"></svg>
+          {{ mode.text }}
+        </a>
+      </li>
+    </ul>
+  </c-dropdown>
+</ng-template>
+
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
     <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
