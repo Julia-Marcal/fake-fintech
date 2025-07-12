@@ -25,7 +25,12 @@ import {
   WidgetStatCComponent,
   WidgetStatFComponent,
   WidgetStatAComponent,
-  RowComponent
+  RowComponent,
+  DropdownComponent,
+  DropdownToggleDirective,
+  DropdownMenuDirective,
+  DropdownItemDirective,
+  ButtonDirective
 } from '@coreui/angular';
 
 @Component({
@@ -53,6 +58,11 @@ import {
     WidgetStatCComponent,
     WidgetStatAComponent,
     ColComponent,
+    DropdownComponent,
+    DropdownToggleDirective,
+    DropdownMenuDirective,
+    DropdownItemDirective,
+    ButtonDirective
   ],
   changeDetection: ChangeDetectionStrategy.Default
 })
@@ -88,6 +98,8 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.walletService.getUserWallets(this.user.sub).subscribe({
       next: (wallets) => {
+        console.log(wallets);
+        
         this.wallets = wallets;
         console.log(this.wallets);
       },
@@ -122,6 +134,13 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
 
   get isDarkTheme(): boolean {
     return this.theme === 'dark';
+  }
+
+  visualizarWallet(wallet: any): void {
+    // Implement view wallet logic
+    console.log('Visualizar wallet:', wallet);
+    // You can navigate to a detail page or open a modal
+    // this.router.navigate(['/wallet', wallet.id]);
   }
 
   ngAfterContentInit(): void {
