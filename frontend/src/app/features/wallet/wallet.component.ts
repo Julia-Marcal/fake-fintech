@@ -67,6 +67,7 @@ import {
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
+  isLoading = false;
   wallets: any[] = [];
   user: any = null;
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -137,10 +138,27 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   visualizarWallet(wallet: any): void {
-    // Implement view wallet logic
-    console.log('Visualizar wallet:', wallet);
-    // You can navigate to a detail page or open a modal
-    // this.router.navigate(['/wallet', wallet.id]);
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
+
+    this.router.navigate([`/stock/${wallet.id}`]).then(() => {
+      this.loaderService.setLoading(false);
+    }).catch(() => {
+      this.isLoading = false;
+      this.loaderService.setLoading(false);
+    });
+  }
+
+  excluirWallet(wallet: any): void {
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
+
+    //make a confirmation dialog before deleting
+    // make the request if confirm
   }
 
   ngAfterContentInit(): void {

@@ -23,6 +23,13 @@ export const routes: Routes = [
           title: 'Wallets'
         }
       },
+      {
+        path: 'stock/:id',
+        loadComponent: () => import('./features/stock/stock.component').then(m => m.StockComponent),
+        data: {
+          title: 'Stocks'
+        }
+      },
     ]
   },
   {
