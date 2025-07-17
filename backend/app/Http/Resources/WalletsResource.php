@@ -8,7 +8,7 @@ class WalletsResource extends JsonResource
 {
     public function toArray($request)
     {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
@@ -17,5 +17,11 @@ class WalletsResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+
+        if (isset($this->assets)) {
+            $data['assets'] = $this->assets;
+        }
+
+        return $data;
     }
 }

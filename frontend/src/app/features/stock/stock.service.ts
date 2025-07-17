@@ -12,6 +12,23 @@ interface Wallet {
     currency: string;
     created_at: string;
     updated_at: string;
+    assets: Array<{
+        id: string;
+        name: string;
+        ticker: string;
+        sector: string;
+        type: string;
+        price: string;
+        quantity: string;
+        currency: string;
+        dividend_yield: string;
+        expense_ratio: string | null;
+        coupon_rate: string | null;
+        maturity_date: string | null;
+        total_value?: number;
+        created_at: string;
+        updated_at: string;
+    }>;
 }
 
 interface ApiResponse {
