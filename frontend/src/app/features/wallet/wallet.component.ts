@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/services/toast/toast.service';
 import { LoaderService } from '../../../shared/services/loader/loader.service';
@@ -8,7 +8,7 @@ import { WalletService } from './wallet.service';
 import { Router } from '@angular/router';
 import { WidgetsDropdownComponent } from '../../../app/base/widgets/widgets-dropdown/widgets-dropdown.component';
 
-import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { WidgetsBrandComponent } from '../../../app/base/widgets/widgets-brand/widgets-brand.component';
 import { IconDirective } from '@coreui/icons-angular';
 import { WidgetsEComponent } from '../../../app/base/widgets/widgets-e/widgets-e.component';
@@ -32,6 +32,8 @@ import {
   DropdownItemDirective,
   ButtonDirective
 } from '@coreui/angular';
+import { ThemeService } from '../../../shared/services/themes/themes.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-wallet',
@@ -64,19 +66,25 @@ import {
     DropdownItemDirective,
     ButtonDirective
   ],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
+export class WalletComponent implements OnInit {
   isLoading = false;
   wallets: any[] = [];
   user: any = null;
-  private changeDetectorRef = inject(ChangeDetectorRef);
-  theme: string | null = JSON.parse(localStorage.getItem('coreui-free-angular-admin-template-theme-default') || 'null');
-  backgroundColor: string = 'white';
+  isDarkTheme$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private walletService: WalletService, private router: Router, private toastService: ToastService, private loaderService: LoaderService) {
+  constructor(
+    private authService: AuthService,
+    private walletService: WalletService,
+    private router: Router,
+    private toastService: ToastService,
+    private loaderService: LoaderService,
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.wallets = [];
-    this.setupStorageListener();
+    this.isDarkTheme$ = this.themeService.isDarkTheme$;
   }
 
   ngOnInit(): void {
@@ -99,42 +107,14 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.walletService.getUserWallets(this.user.sub).subscribe({
       next: (wallets) => {
-        console.log(wallets);
-        
         this.wallets = wallets;
-        console.log(this.wallets);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error fetching user wallets:', err);
+        this.cdr.markForCheck();
       }
     });
-  }
-
-  private setupStorageListener(): void {
-    window.addEventListener('storage', this.handleStorageChange.bind(this));
-
-    const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function (key: string, value: string) {
-      originalSetItem.apply(this, [key, value]);
-      if (key === 'coreui-free-angular-admin-template-theme-default') {
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: key,
-          newValue: value,
-          storageArea: localStorage
-        }));
-      }
-    };
-  }
-
-  private handleStorageChange(event: StorageEvent): void {
-    if (event.key === 'coreui-free-angular-admin-template-theme-default') {
-      this.theme = JSON.parse(event.newValue || 'null');
-      this.changeDetectorRef.detectChanges();
-    }
-  }
-
-  get isDarkTheme(): boolean {
-    return this.theme === 'dark';
   }
 
   visualizarWallet(wallet: any): void {
@@ -143,7 +123,7 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
     this.isLoading = true;
     this.loaderService.setLoading(true);
 
-    this.router.navigate([`/stock/${wallet.id}`]).then(() => {
+    this.router.navigate([`/wallet/${wallet.id}/stocks`]).then(() => {
       this.loaderService.setLoading(false);
     }).catch(() => {
       this.isLoading = false;
@@ -156,16 +136,6 @@ export class WalletComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.isLoading = true;
     this.loaderService.setLoading(true);
-
-    //make a confirmation dialog before deleting
-    // make the request if confirm
-  }
-
-  ngAfterContentInit(): void {
-    this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnDestroy(): void {
-    window.removeEventListener('storage', this.handleStorageChange.bind(this));
+    // Implement exclusion logic here
   }
 }
