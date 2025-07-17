@@ -24,10 +24,10 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'stock/:id',
+        path: 'wallet/:id/stocks',
         loadComponent: () => import('./features/stock/stock.component').then(m => m.StockComponent),
         data: {
-          title: 'Stocks'
+          title: 'Wallet Stocks'
         }
       },
     ]
