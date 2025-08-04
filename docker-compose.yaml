@@ -63,8 +63,20 @@ services:
     depends_on:
       - app
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - 'rabbitmq_data:/data'
+
 volumes:
   mysql_data:
+    driver: local
+  rabbitmq_data:
     driver: local
 
 networks:
