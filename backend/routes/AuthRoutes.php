@@ -18,3 +18,9 @@ Route::prefix('auth')->middleware('throttle:api')->group(function () {
         return $JWTAuthService->refresh($request);
     });
 });
+    use App\Jobs\ProcessRabbitMQMessage;
+    Route::get('/send-message', function () {
+        $rabbit = new ProcessRabbitMQMessage();
+        $rabbit->publish('test_queue', 'Hello from Laravel!');
+        return 'Message sent!';
+    });
