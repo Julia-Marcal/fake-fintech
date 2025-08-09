@@ -5,6 +5,7 @@ use App\Http\Controllers\MessageController;
 
 Route::prefix('jobs')->middleware('throttle:api')->group(function () {
     Route::post('/send-message', [MessageController::class, 'sendMessage']);
+    Route::post('/consume-single-message', action: [MessageController::class, 'consumeSingleMessage']);
 });
 
 Route::get('/clear-cache', function () {

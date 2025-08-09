@@ -19,4 +19,22 @@ class MessageController extends Controller
 
         return response()->json(['status' => 'Message queued for sending']);
     }
+    public function consumeSingleMessage(Request $request)
+    {
+        $data = $request->validate([
+            'queue' => 'required|string',
+        ]);
+
+        $rabbit = new ProcessRabbitMQMessage();
+        $message = $rabbit->get($data['queue']);
+
+        if ($message) {
+            return response()->json([
+                'status' => 'Message consumed',
+                'message' => $message
+            ]);
+        }
+
+        return response()->json(['status' => 'No messages in queue']);
+    }
 }

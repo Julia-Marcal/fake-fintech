@@ -30,6 +30,21 @@ class ProcessRabbitMQMessage
         $this->channel->basic_publish($msg, '', $queue);
     }
 
+    public function get(string $queue): ?string
+    {
+        $this->channel->queue_declare($queue, false, true, false, false);
+        $message = $this->channel->basic_get($queue);
+
+        if (null === $message) {
+            return null;
+        }
+
+        // Acknowledge the message so RabbitMQ knows it can be deleted.
+        $this->channel->basic_ack($message->getDeliveryTag());
+
+        return $message->getBody();
+    }
+
     public function consume(string $queue, callable $callback)
     {
         $this->channel->queue_declare($queue, false, true, false, false);
