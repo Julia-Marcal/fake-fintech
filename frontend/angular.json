@@ -38,6 +38,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/styles/styles.scss",
               "src/styles/tailwind.css"
             ],
@@ -107,6 +108,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/styles/styles.scss"
             ],
             "scripts": []
