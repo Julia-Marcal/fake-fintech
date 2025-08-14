@@ -11,15 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create(table: 'assets_requests', callback: function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId(column: 'wallet_assets_id');
+            $table->uuid(column: 'id')->primary();
+            $table->foreignUuid(column: 'assets_id')->constrained(table: 'assets')->onDelete(action: 'cascade');
             $table->string(column: 'link');
-            $table->json(column: 'payload');
+            $table->json(column: 'payload')->nullable();
             $table->timestamps();
 
-            $table->foreign(columns: 'wallet_assets_id')->references(columns: 'id')->on(table: 'wallet_assets')->onDelete(action: 'cascade');
+            $table->foreign(columns: 'assets_id')->references(columns: 'id')->on(table: 'assets')->onDelete(action: 'cascade');
 
-            $table->unique(columns: ['wallet_assets_id']);
+            $table->unique(columns: ['assets_id']);
         });
     }
     /**
