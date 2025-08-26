@@ -11,9 +11,10 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func StartConsumer(messages <-chan amqp.Delivery, apiKey string) {
+func StartConsumer(messages <-chan amqp.Delivery, api_key string) {
 	for msg := range messages {
 		var task task.AssetTask
+
 		err := json.Unmarshal(msg.Body, &task)
 		if err != nil {
 			log.Println("Failed to unmarshal message:", err)
@@ -23,17 +24,19 @@ func StartConsumer(messages <-chan amqp.Delivery, apiKey string) {
 
 		log.Printf("Processing task: %+v\n", task)
 
-		var apiResponse []byte
-		var apiErr error
+		var api_response []byte
+		var api_err error
 
 		if task.Action == "FETCH_PRICE" {
-			apiResponse, apiErr = services.FetchPriceAlphaVantage(task, apiKey)
-			if apiErr != nil {
-				log.Println("Failed to fetch price:", apiErr)
+			api_response, api_err = services.FetchPriceCoinCap(task, api_key)
+
+			if api_err != nil {
+				log.Println("Failed to fetch price:", api_err)
 				msg.Nack(false, false)
 				continue
 			}
-			log.Printf("API Response for %s: %s", task.Symbol, string(apiResponse))
+
+			log.Printf("API Response for %s: %s", task.Symbol, string(api_response))
 		}
 
 		msg.Ack(false)
@@ -46,7 +49,7 @@ func main() {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	messages, conn, ch, err := rabbitmq.ConsumeMessages(cfg.RabbitMQConnString, "assets-watcher")
+	messages, conn, ch, err := rabbitmq.ConsumeMessages(cfg.RabbitMQConnString, "assets-tasks")
 	if err != nil {
 		log.Fatal("Failed to consume messages:", err)
 	}
@@ -55,7 +58,7 @@ func main() {
 
 	forever := make(chan bool)
 
-	go StartConsumer(messages, cfg.AlphaVantageAPIKey)
+	go StartConsumer(messages, cfg.CoinCapAPIKey)
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
