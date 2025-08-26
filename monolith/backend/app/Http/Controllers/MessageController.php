@@ -15,7 +15,7 @@ class MessageController extends Controller
         ]);
 
         $rabbit = new ProcessRabbitMQMessage();
-         $rabbit->publish(queue: $data['queue'], message: json_encode($data['message']));
+        $rabbit->publish(queue: $data['queue'], message: json_encode($data['message']));
 
         return response()->json(['status' => 'Message queued for sending']);
     }
