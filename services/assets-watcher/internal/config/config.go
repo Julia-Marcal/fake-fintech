@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	RabbitMQConnString string
-	AlphaVantageAPIKey string
+	CoinCapAPIKey      string
 }
 
 func Load() (*Config, error) {
@@ -23,14 +23,14 @@ func Load() (*Config, error) {
 	rabbitmqHost := getEnv("RABBITMQ_HOST", "localhost")
 	rabbitmqPort := getEnv("RABBITMQ_PORT", "5672")
 
-	alphaVantageAPIKey := getEnv("ALPHAVANTAGE_API_KEY", "")
-	if alphaVantageAPIKey == "" {
-		return nil, fmt.Errorf("error: ALPHAVANTAGE_API_KEY is not set in the environment")
+	coinCapAPIKey := getEnv("COINCAP_API_KEY", "")
+	if coinCapAPIKey == "" {
+		return nil, fmt.Errorf("error: COINCAP_API_KEY is not set in the environment")
 	}
 
 	cfg := &Config{
 		RabbitMQConnString: fmt.Sprintf("amqp://%s:%s@%s:%s/", rabbitmqUser, rabbitmqPassword, rabbitmqHost, rabbitmqPort),
-		AlphaVantageAPIKey: alphaVantageAPIKey,
+		CoinCapAPIKey:      coinCapAPIKey,
 	}
 
 	return cfg, nil
