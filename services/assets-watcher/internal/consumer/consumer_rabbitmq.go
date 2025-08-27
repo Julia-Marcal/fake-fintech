@@ -1,4 +1,4 @@
-package rabbitmq
+package consumer
 
 import (
 	"fmt"
@@ -6,12 +6,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func ConsumeMessages(connString string, queue_name string) (<-chan amqp.Delivery, *amqp.Connection, *amqp.Channel, error) {
-
-	conn, err := amqp.Dial(connString)
-	if err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to connect to RabbitMQ: %w", err)
-	}
+func ConsumeMessages(conn *amqp.Connection, queueName string) (<-chan amqp.Delivery, *amqp.Connection, *amqp.Channel, error) {
 
 	ch, err := conn.Channel()
 	if err != nil {
@@ -27,7 +22,7 @@ func ConsumeMessages(connString string, queue_name string) (<-chan amqp.Delivery
 	}
 
 	queue, err := ch.QueueDeclare(
-		queue_name,
+		queueName,
 		true,
 		false,
 		false,
