@@ -28,13 +28,24 @@ class MessageController extends Controller
         $rabbit = new ProcessRabbitMQMessage();
         $message = $rabbit->get($data['queue']);
 
+        $decoded_message = $this->decodeMessage(message: $message);
+
         if ($message) {
-            return response()->json([
+            return response()->json(data: [
                 'status' => 'Message consumed',
-                'message' => $message
+                'message' => $decoded_message->priceUsd
             ]);
         }
 
-        return response()->json(['status' => 'No messages in queue']);
+        return response()->json(data: ['status' => 'No messages in queue']);
+    }
+
+    function decodeMessage($message)
+    {
+        while (!is_object(value: $message)) {
+            $message = json_decode(json: $message);
+            $message = $message->response ?? $message->data ?? $message;
+        }
+        return $message;
     }
 }
