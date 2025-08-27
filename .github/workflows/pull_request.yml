@@ -20,11 +20,11 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: ./frontend
+        working-directory: ./monolith/frontend
         run: npm install
 
       - name: Build project
-        working-directory: ./frontend
+        working-directory: ./monolith/frontend
         run: npm run build
 
       - name: Security Scan
@@ -56,11 +56,11 @@ jobs:
           go-version: 1.22
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: ./monolith/backend
         run: go mod tidy
 
       - name: Build project
-        working-directory: ./backend
+        working-directory: ./monolith/backend
         run: go build -buildvcs=false
 
       - name: Security Scan

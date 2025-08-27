@@ -14,7 +14,7 @@ jobs:
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.KEY }}
-          LINTER_RULES_PATH: './frontend'
+          LINTER_RULES_PATH: './monolith/frontend'
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_TYPESCRIPT_ES: true
           FILTER_REGEX_EXCLUDE: (dist|node_modules|backend)

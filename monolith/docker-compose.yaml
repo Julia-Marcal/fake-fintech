@@ -1,0 +1,88 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app/frontend
+    ports:
+      - "80:80"
+      
+  mysql:
+    image: mysql:8.0
+    container_name: fake-fintech_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-fake-fintech}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "${DB_PORT:-3333}:3306"
+    networks:
+      - laravel-network
+
+  redis:
+    image: redis:alpine
+    container_name: fake-fintech_redis
+    restart: unless-stopped
+    ports:
+      - "6666:6379"
+    networks:
+      - laravel-network
+
+  app:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: fake-fintech_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel-network
+    depends_on:
+      - mysql
+      - redis
+
+  webserver:
+    image: nginx:alpine
+    container_name: fake-fintech_webserver
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8888}:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - laravel-network
+    depends_on:
+      - app
+
+  rabbitmq:
+    container_name: fake-fintech_rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - 'rabbitmq_data:/data'
+    networks:
+      - laravel-network
+
+volumes:
+  mysql_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  laravel-network:
+    driver: bridge

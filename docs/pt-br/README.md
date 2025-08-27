@@ -1,83 +1,47 @@
 # Fake Fintech
 
-## Introdução
+## Visão Geral
 
-O projeto **Fake Fintech** é uma iniciativa com o objetivo de entender como as aplicações de fintech funcionam, com foco nas regras e conceitos subjacentes que as impulsionam. Este projeto explora a integração com APIs conectadas ao ecossistema financeiro de fintechs, além de construir um sistema de rastreamento para que os usuários acompanhem suas finanças.
+**Fake Fintech** é um projeto de aprendizado criado para explorar a arquitetura e as regras por trás de aplicações fintech. Ele demonstra como integrar APIs de terceiros, gerenciar tarefas assíncronas e construir um sistema robusto de acompanhamento financeiro utilizando tecnologias modernas.
 
-### Arquitetura do Projeto
+## Arquitetura
 
-Este projeto está estruturado com as seguintes tecnologias:
+O projeto está dividido em duas partes principais:
 
-- **Backend**: Construído em **Golang** usando o framework **Gin**.
-- **Frontend**: O frontend é baseado no template **CoreUI** Angular 19, proporcionando uma interface responsiva e modular para interação com o backend.
-- **Banco de Dados**: **PostgreSQL** é utilizado para armazenar e gerenciar os dados financeiros.
-- **Cache**: Usando **Redis**.
+### 1. Aplicação Monolítica
 
-## Configuração do Backend
+- **Backend:** PHP (Laravel)
+- **Frontend:** Angular 19 (template CoreUI)
+- **Banco de Dados:** PostgreSQL
+- **Cache:** Redis
 
-### Configuração do Ambiente
+### 2. Microsserviços
 
-Para garantir a configuração correta do seu ambiente, o arquivo `backend/config/env/env.go` contém a configuração para a conexão com o PostgreSQL. Certifique-se de que as variáveis de ambiente estejam corretamente configuradas.
+- **Mensageria:** RabbitMQ
+- **Serviço Asset Watcher:** Golang (busca preços de ativos em múltiplas APIs)
 
-### Configuração do Backend
+#### Fluxo do Serviço
 
-1. **Instale as dependências**:
-   - Instale o [Go](https://golang.org/dl/) (Golang 1.18+ recomendado).
-   - Execute o Docker Compose para configurar o ambiente do backend.
+1. **Ação do Usuário:** Dispara uma tarefa (ex: buscar preço de criptomoeda).
+2. **Fila de Tarefas:** A tarefa é enviada para o RabbitMQ (fila `assets-tasks`).
+3. **Asset Watcher:** Serviço em Golang consome mensagens, busca preços no CoinCap, processa resultados e retorna o resultado.
 
-2. **Execute o backend**:
-   - Certifique-se de que as variáveis de ambiente `POSTGRES_*` estejam corretamente configuradas.
-   - Inicie o backend:
-     ```bash
-     go run main.go
-     ```
-
-## Configuração do Frontend
-
-O frontend é construído em **Angular 19** e baseado no template **CoreUI**, oferecendo uma interface amigável para interagir com o backend.
-
-### Configuração do Frontend
-
-1. **Clone o repositório**:
-   ```bash
-   git clone https://github.com/your-username/fake-fintech-frontend.git
-   cd fake-fintech-frontend
-   ```
-
-2. **Instale as dependências**:
-   - Instale o [Node.js](https://nodejs.org/en/download/) (recomendado v16 ou superior).
-   - Instale as dependências do frontend:
-     ```bash
-     npm install
-     ```
-
-3. **Execute o frontend**:
-   - Inicie a aplicação Angular:
-     ```bash
-     ng serve
-     ```
-   - O app estará acessível em `http://localhost:4200`.
-
-
-### Configurando o SonarQube
-
-1. **Execute o SonarQube No Docker**  
-   Siga o guia oficial do SonarQube para configurá-lo em sua código local.
-
-2. **Instale as Extensões Necessárias**  
-   - Acesse **Administração > Marketplace** no painel do SonarQube.  
-   - Pesquise e instale a extensão **Dependency-Check**.
-
-3. **Acesse o SonarQube**  
-   - Após iniciado, a aplicação estará disponível em [`http://localhost:9000`](http://localhost:9000).
+## Objetivos atuais:
+- **Dashboard**: Criar um dashboard limpo para que o usuário acesse seus dados facilmente
+- **Dados financeiros do usuário**: quanto investe e utiliza no dia a dia
 
 ## Desenvolvimento Futuro
-
-No futuro, este projeto integrará com APIs de fintech de terceiros para obter dados financeiros em tempo real e expandir sua funcionalidade com recursos avançados, como:
+No futuro, este projeto irá expandir suas funcionalidades com recursos avançados como:
 
 - **Transações**: Gerenciar e calcular transações financeiras.
-- **Taxas de Juros**: Recuperar e aplicar cálculos de juros.
-- **Contas de Usuários**: Criar e gerenciar dados de usuários.
-- **Cálculos de Empréstimos**: Implementar funcionalidades de cálculo de empréstimos.
+- **Taxas de Juros**: Buscar e aplicar cálculos de juros.
+- **Contas de Usuário**: Criar e gerenciar dados de usuários.
+- **Cálculo de Empréstimos**: Implementar funcionalidades de cálculo de empréstimos.
 - **Análise de Transações**: Fornecer insights detalhados sobre transações.
-- **Gerenciamento de Contas e Portfólios**: Gerenciar contas de usuários e seus portfólios.
+- **Gestão de Contas e Portfólios**: Gerenciar contas de usuários e seus portfólios.
+
+---
+
+### Fake Fintech - PT-br
+
+[README em Português](./docs/pt-br/Readme.md)
