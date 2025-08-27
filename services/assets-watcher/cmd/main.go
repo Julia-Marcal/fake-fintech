@@ -5,17 +5,22 @@ import (
 	"log"
 
 	"github.com/Julia-Marcal/assets-watcher/internal/config"
-	rabbitmq "github.com/Julia-Marcal/assets-watcher/internal/consumer"
-	task "github.com/Julia-Marcal/assets-watcher/internal/domain"
+	consumer "github.com/Julia-Marcal/assets-watcher/internal/consumer"
+	domain "github.com/Julia-Marcal/assets-watcher/internal/domain"
+	publisher "github.com/Julia-Marcal/assets-watcher/internal/publisher"
 	services "github.com/Julia-Marcal/assets-watcher/internal/services"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func StartConsumer(messages <-chan amqp.Delivery, api_key string) {
+var conn *amqp.Connection
+
+func ProcessAssetTasks(messages <-chan amqp.Delivery, api_key string, ch *amqp.Channel) {
 	for msg := range messages {
-		var task task.AssetTask
+		var task domain.AssetTask
+		var response domain.PublishResponse
 
 		err := json.Unmarshal(msg.Body, &task)
+
 		if err != nil {
 			log.Println("Failed to unmarshal message:", err)
 			msg.Nack(false, false)
@@ -28,7 +33,9 @@ func StartConsumer(messages <-chan amqp.Delivery, api_key string) {
 		var api_err error
 
 		if task.Action == "FETCH_PRICE" {
-			api_response, api_err = services.FetchPriceCoinCap(task, api_key)
+			if task.Market == "crypto" {
+				api_response, api_err = services.FetchPriceCoinCap(task, api_key)
+			}
 
 			if api_err != nil {
 				log.Println("Failed to fetch price:", api_err)
@@ -36,7 +43,14 @@ func StartConsumer(messages <-chan amqp.Delivery, api_key string) {
 				continue
 			}
 
+			response = domain.PublishResponse{
+				Action:   task.Action,
+				Market:   task.Market,
+				Response: string(api_response),
+			}
+
 			log.Printf("API Response for %s: %s", task.Symbol, string(api_response))
+			publisher.PublishMessage(ch, "price-responses", response)
 		}
 
 		msg.Ack(false)
@@ -49,7 +63,12 @@ func main() {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	messages, conn, ch, err := rabbitmq.ConsumeMessages(cfg.RabbitMQConnString, "assets-tasks")
+	conn, err := config.GetConnection(cfg.RabbitMQConnString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	messages, conn, ch, err := consumer.ConsumeMessages(conn, "assets-tasks")
 	if err != nil {
 		log.Fatal("Failed to consume messages:", err)
 	}
@@ -58,7 +77,7 @@ func main() {
 
 	forever := make(chan bool)
 
-	go StartConsumer(messages, cfg.CoinCapAPIKey)
+	go ProcessAssetTasks(messages, cfg.CoinCapAPIKey, ch)
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
