@@ -1,27 +1,43 @@
 services:
-  frontend:
+  backend:
     build:
-      context: ./frontend
+      context: ./backend
       dockerfile: Dockerfile
+    container_name: fake-fintech_backend
+    restart: unless-stopped
+    working_dir: /var/www
     volumes:
-      - ./frontend:/app/frontend
-    ports:
-      - "80:80"
-      
+      - ./backend:/var/www
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3333
+      DB_DATABASE: ${DB_DATABASE:-example_db}
+      DB_USERNAME: ${DB_USERNAME:-example_user}
+      DB_PASSWORD: ${DB_PASSWORD:-example_password}
+      CACHE_DRIVER: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SESSION_DRIVER: redis
+      JWT_SECRET: ${JWT_SECRET:-FAKE_JWT_SECRET}
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - laravel-network
+
   mysql:
     image: mysql:8.0
     container_name: fake-fintech_mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-fake-fintech}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_USER: ${DB_USERNAME:-laravel}
+      MYSQL_DATABASE: ${DB_DATABASE:-example_db}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-example_password}
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - "${DB_PORT:-3333}:3306"
+      - "3333:3306"
     networks:
       - laravel-network
 
@@ -30,38 +46,23 @@ services:
     container_name: fake-fintech_redis
     restart: unless-stopped
     ports:
-      - "6666:6379"
+      - "6379:6379"
     networks:
       - laravel-network
 
-  app:
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
-    container_name: fake-fintech_app
-    restart: unless-stopped
-    working_dir: /var/www
-    volumes:
-      - .:/var/www
-    networks:
-      - laravel-network
-    depends_on:
-      - mysql
-      - redis
-
-  webserver:
+  nginx:
     image: nginx:alpine
-    container_name: fake-fintech_webserver
+    container_name: fake-fintech_nginx
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8888}:80"
+      - "8080:80"
     volumes:
-      - .:/var/www
+      - ./backend:/var/www:ro
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - backend
     networks:
       - laravel-network
-    depends_on:
-      - app
 
   rabbitmq:
     container_name: fake-fintech_rabbitmq
@@ -73,7 +74,7 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
-      - 'rabbitmq_data:/data'
+      - rabbitmq_data:/data
     networks:
       - laravel-network
 
