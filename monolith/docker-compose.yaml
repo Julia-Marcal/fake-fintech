@@ -5,13 +5,12 @@ services:
       dockerfile: Dockerfile
     container_name: fake-fintech_backend
     restart: unless-stopped
-    working_dir: /var/www
     volumes:
       - ./backend:/var/www
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql
-      DB_PORT: 3333
+      DB_PORT: 3306
       DB_DATABASE: ${DB_DATABASE:-example_db}
       DB_USERNAME: ${DB_USERNAME:-example_user}
       DB_PASSWORD: ${DB_PASSWORD:-example_password}
@@ -50,15 +49,14 @@ services:
     networks:
       - laravel-network
 
-  nginx:
-    image: nginx:alpine
-    container_name: fake-fintech_nginx
-    restart: unless-stopped
+  fake_fintech_nginx_backend:
+    image: nginx:stable-alpine
+    container_name: fake_fintech_nginx_backend
     ports:
       - "8080:80"
     volumes:
       - ./backend:/var/www:ro
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/nginx.backend.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - backend
     networks:
@@ -75,6 +73,18 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - rabbitmq_data:/data
+    networks:
+      - laravel-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile-build
+    container_name: fake-fintech_frontend
+    image: fake-fintech_frontend:latest
+    restart: unless-stopped
+    ports:
+      - "4200:80"
     networks:
       - laravel-network
 
