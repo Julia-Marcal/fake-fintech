@@ -1,6 +1,6 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { NgFor, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
 import {
@@ -18,26 +18,35 @@ import {
   HeaderComponent,
   HeaderNavComponent,
   HeaderTogglerDirective,
-  NavItemComponent,
   NavLinkDirective,
   SidebarToggleDirective
 } from '@coreui/angular';
 
-import { IconDirective } from '@coreui/icons-angular';
+import { IconModule } from '@coreui/icons-angular';
 
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavLinkDirective, RouterLink, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconModule, HeaderNavComponent, RouterLink, NgFor, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
+  readonly colorModeService = this.#colorModeService;
 
   readonly colorModes = [
-    { name: 'dark', text: 'Dark', icon: 'cilMoon' }
+    { name: 'light', text: 'Light', icon: 'cilSun' },
+    { name: 'dark', text: 'Dark', icon: 'cilMoon' },
+    { name: 'auto', text: 'Auto', icon: 'cilContrast' }
   ];
+
+  readonly icons = computed(() => {
+    const currentMode = this.colorMode();
+    return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
+  });
+
+
 
   constructor(private authService: AuthService, private router: Router) {
     super();

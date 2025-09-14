@@ -1,46 +1,45 @@
-<!--<c-header class="mb-4 d-print-none" position="sticky">-->
 <ng-container>
-  <c-container [fluid]="true" class="border-bottom px-4">
-    <button
-      [cSidebarToggle]="sidebarId()"
-      cHeaderToggler
-      class="btn"
-      toggle="visible"
-      style="margin-inline-start: -14px;"
-      aria-label="Toggle sidebar navigation"
-    >
+  <c-container [fluid]="true" class="border-bottom px-2 d-flex align-items-center justify-content-between"
+    style="height:44px; line-height:44px;">
+
+    <button [cSidebarToggle]="sidebarId()" cHeaderToggler class="btn btn-sm p-0 me-2" style="margin-inline-start:-8px;"
+      aria-label="Toggle sidebar navigation">
       <svg cIcon name="cilMenu" size="lg"></svg>
     </button>
 
-
-    <c-header-nav class="d-none d-md-flex ms-auto ">
-      <a cNavLink>
-        <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
-      </a>
+    <c-header-nav class="d-flex align-items-center gap-2">
+      <ng-container *ngTemplateOutlet="themeDropdown"></ng-container>
+      <div class="vr mx-2 text-body text-opacity-75"></div>
+      <ng-container *ngTemplateOutlet="userDropdown"></ng-container>
     </c-header-nav>
-
-    <c-header-nav class="mx-0">
-      <ng-container *ngTemplateOutlet="userDropdown" />
-    </c-header-nav>
-
   </c-container>
-  <c-container [fluid]="true" class="px-4">
+
+  <c-container [fluid]="true" class="px-2 d-flex align-items-center" style="height:32px; line-height:32px;">
     <c-breadcrumb-router />
   </c-container>
 </ng-container>
-<!--</c-header>-->
+
+<ng-template #themeDropdown>
+  <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
+    <button [caret]="false" cDropdownToggle class="p-0" aria-label="Open theme menu">
+      <c-icon [name]="icons()" size="lg"></c-icon>
+    </button>
+    <ul cDropdownMenu class="pt-0 w-auto">
+      <li *ngFor="let mode of colorModes">
+        <a cDropdownItem (click)="colorModeService.colorMode.set(mode.name)">
+          <c-icon class="me-2" [name]="mode.icon"></c-icon>
+          {{ mode.text }}
+        </a>
+      </li>
+    </ul>
+  </c-dropdown>
+</ng-template>
 
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
     <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
-      <c-avatar
-        shape="rounded-1"
-        [size]="'md'"
-        src="./assets/images/avatars/8.jpg"
-        status="success"
-        textColor="primary"
-        alt="User avatar"
-      />
+      <c-avatar shape="rounded-1" [size]="'md'" src="./assets/images/avatars/8.jpg" status="success" textColor="primary"
+        alt="User avatar" />
     </button>
     <ul cDropdownMenu class="pt-0 w-auto">
       <li>
@@ -60,7 +59,6 @@
           Settings
         </h6>
       </li>
-      <li></li>
       <li>
         <a cDropdownItem routerLink="/user">
           <svg cIcon class="me-2" name="cilUser"></svg>
@@ -85,4 +83,3 @@
     </ul>
   </c-dropdown>
 </ng-template>
-
