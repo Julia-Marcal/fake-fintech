@@ -20,7 +20,14 @@ export const routes: Routes = [
         path: 'wallet',
         loadComponent: () => import('./features/wallet/wallet.component').then(m => m.WalletComponent),
         data: {
-          title: 'Register Page'
+          title: 'Wallets'
+        }
+      },
+      {
+        path: 'wallet/:id/stocks',
+        loadComponent: () => import('./features/stock/stock.component').then(m => m.StockComponent),
+        data: {
+          title: 'Wallet Stocks'
         }
       },
     ]
