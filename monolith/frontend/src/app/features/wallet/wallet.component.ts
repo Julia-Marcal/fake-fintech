@@ -1,16 +1,28 @@
-import { Component } from '@angular/core';
-import { NgStyle } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/services/toast/toast.service';
 import { LoaderService } from '../../../shared/services/loader/loader.service';
-import { IconDirective } from '@coreui/icons-angular';
-import {
-  ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective,
-  CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective,
-  FormControlDirective, ButtonDirective
-} from '@coreui/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth/auth.service';
+import { WalletService } from './wallet.service';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'
+
+import { ChangeDetectionStrategy } from '@angular/core';
+import {
+  TextColorDirective,
+  CardBodyComponent,
+  CardComponent,
+  CardHeaderComponent,
+  ColComponent,
+  RowComponent,
+  DropdownComponent,
+  DropdownToggleDirective,
+  DropdownMenuDirective,
+  DropdownItemDirective,
+  ButtonDirective
+} from '@coreui/angular';
+import { ThemeService } from '../../../shared/services/themes/themes.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-wallet',
@@ -18,17 +30,92 @@ import { FormsModule } from '@angular/forms'
   styleUrls: ['./wallet.component.scss'],
   standalone: true,
   imports: [
-    ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective,
-    CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective,
-    IconDirective, FormControlDirective, ButtonDirective, NgStyle, FormsModule
+    CommonModule,
+    TextColorDirective,
+    CardComponent,
+    CardHeaderComponent,
+    CardBodyComponent,
+    RowComponent,
+    ReactiveFormsModule,
+    ColComponent,
+    DropdownComponent,
+    DropdownToggleDirective,
+    DropdownMenuDirective,
+    DropdownItemDirective,
+    ButtonDirective
   ],
-
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WalletComponent {
+export class WalletComponent implements OnInit {
   isLoading = false;
-  email: string = '';
-  password: string = '';
+  wallets: any[] = [];
+  user: any = null;
+  isDarkTheme$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private router: Router, private toastService: ToastService, private loaderService: LoaderService) { }
+  constructor(
+    private authService: AuthService,
+    private walletService: WalletService,
+    private router: Router,
+    private toastService: ToastService,
+    private loaderService: LoaderService,
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.wallets = [];
+    this.isDarkTheme$ = this.themeService.isDarkTheme$;
+  }
 
+  ngOnInit(): void {
+    this.user = this.authService.getDecodedToken();
+
+    if (!this.user || !this.user.sub) {
+      this.toastService.showToast({
+        title: 'Erro',
+        message: 'Erro ao obter os dados do usuário. Você não está logado.',
+        duration: 3000,
+        position: 'top-end'
+      });
+
+      setTimeout(() => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }, 1500);
+      return;
+    }
+
+    this.walletService.getUserWallets(this.user.sub).subscribe({
+      next: (wallets) => {
+        this.wallets = wallets;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error fetching user wallets:', err);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  visualizarWallet(wallet: any): void {
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
+
+    console.log(wallet);
+
+
+    this.router.navigate([`/wallet/${wallet.id}/stocks`]).then(() => {
+      this.loaderService.setLoading(false);
+    }).catch(() => {
+      this.isLoading = false;
+      this.loaderService.setLoading(false);
+    });
+  }
+
+  excluirWallet(wallet: any): void {
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.loaderService.setLoading(true);
+  }
 }
