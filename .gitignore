@@ -1,2 +1,4 @@
 .scannerwork
 services/assets-watcher/todo.md
+monolith/frontend/node_modules
+monolith/frontend/dist
