@@ -5,15 +5,14 @@ import (
 	"log"
 
 	"github.com/Julia-Marcal/fake-fintech/internal/config"
-	"github.com/Julia-Marcal/fake-fintech/internal/consumer"
-	"github.com/Julia-Marcal/fake-fintech/internal/domain"
-	"github.com/Julia-Marcal/fake-fintech/internal/publisher"
-	"github.com/Julia-Marcal/fake-fintech/internal/services"
+	domain "github.com/Julia-Marcal/fake-fintech/internal/domain/entity"
+	"github.com/Julia-Marcal/fake-fintech/internal/infrastructure/rabbitmq"
+	"github.com/Julia-Marcal/fake-fintech/internal/service"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func MessageConsumer(conn *amqp.Connection, config *config.Config) {
-	messages, conn, ch, err := consumer.ConsumeMessages(conn, "assets-tasks")
+	messages, conn, ch, err := rabbitmq.ConsumeMessages(conn, "assets-tasks")
 	if err != nil {
 		log.Fatal("Failed to consume messages:", err)
 	}
@@ -48,7 +47,7 @@ func ProcessAssetTasks(messages <-chan amqp.Delivery, apiKey string, ch *amqp.Ch
 
 		if task.Action == "FETCH_PRICE" {
 			if task.Market == "crypto" {
-				apiResponse, apiErr = services.FetchPriceCoinCap(task, apiKey)
+				apiResponse, apiErr = service.FetchPriceCoinCap(task, apiKey)
 			}
 
 			if apiErr != nil {
@@ -64,7 +63,7 @@ func ProcessAssetTasks(messages <-chan amqp.Delivery, apiKey string, ch *amqp.Ch
 			}
 
 			log.Printf("API Response for %s: %s", task.Symbol, string(apiResponse))
-			publisher.PublishMessage(ch, "price-responses", response)
+			rabbitmq.PublishMessage(ch, "price-responses", response)
 		}
 
 		msg.Ack(false)

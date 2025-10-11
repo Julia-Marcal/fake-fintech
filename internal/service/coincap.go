@@ -1,11 +1,11 @@
-package services
+package service
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 
-	task "github.com/Julia-Marcal/fake-fintech/internal/domain"
+	task "github.com/Julia-Marcal/fake-fintech/internal/domain/entity"
 )
 
 func FetchPriceCoinCap(task task.AssetTask, apiKey string) ([]byte, error) {

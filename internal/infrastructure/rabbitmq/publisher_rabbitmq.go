@@ -1,11 +1,11 @@
-package publisher
+package rabbitmq
 
 import (
 	"fmt"
 
 	"encoding/json"
 
-	domain "github.com/Julia-Marcal/fake-fintech/internal/domain"
+	domain "github.com/Julia-Marcal/fake-fintech/internal/domain/entity"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

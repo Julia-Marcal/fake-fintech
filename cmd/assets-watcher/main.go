@@ -5,6 +5,7 @@ import (
 
 	services "github.com/Julia-Marcal/fake-fintech/internal/assets/services"
 	"github.com/Julia-Marcal/fake-fintech/internal/config"
+	"github.com/Julia-Marcal/fake-fintech/internal/infrastructure/rabbitmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -16,7 +17,7 @@ func main() {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
-	conn, err := config.GetConnection(cfg.RabbitMQConnString)
+	conn, err := rabbitmq.GetConnection(cfg.RabbitMQConnString)
 	if err != nil {
 		log.Fatal(err)
 	}
